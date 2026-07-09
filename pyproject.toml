@@ -1,0 +1,15 @@
+[project]
+name = "hack-admet"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "lightgbm>=4.6.0",
+    "numpy>=1.26.4",
+    "pandas>=2.3.3",
+    "pytdc>=1.1.15",
+    "rdkit>=2023.9.6",
+    "scikit-learn>=1.9.0",
+    "setuptools<81",
+]
