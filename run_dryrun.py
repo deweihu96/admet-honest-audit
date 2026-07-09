@@ -20,8 +20,9 @@ RDLogger.DisableLog("rdApp.*")
 
 BENCH = "Caco2_Wang"
 SEEDS = [1, 2, 3, 4, 5]           # official TDC protocol
-FP_RADIUS_MODEL = 2               # ECFP4 features for the regressor
-FP_RADIUS_LEAK = 3                # spec: leakage check uses radius 3
+# Two DIFFERENT radii on purpose (not a bug, see call sites + CLAUDE.md):
+FP_RADIUS_MODEL = 2               # ECFP4, standard modeling feature radius
+FP_RADIUS_LEAK = 3                # ECFP6, the Receptor.AI audit leakage spec
 N_BITS = 2048
 
 
@@ -66,6 +67,8 @@ def run_baseline(group):
     benchmark = group.get(BENCH)
     name = benchmark["name"]
     test = benchmark["test"]
+    # radius 2 (ECFP4): standard modeling features. Deliberately different from
+    # the leakage check's radius 3 -- see FP_RADIUS_* and CLAUDE.md.
     X_test = morgan_matrix(test["Drug"].tolist(), FP_RADIUS_MODEL, N_BITS)  # features only
 
     predictions_list = []
@@ -74,6 +77,7 @@ def run_baseline(group):
         train, valid = group.get_train_valid_split(
             benchmark=BENCH, split_type="default", seed=seed
         )
+        # radius 2 (ECFP4) modeling features (cf. leakage check at radius 3).
         X_tr = morgan_matrix(train["Drug"].tolist(), FP_RADIUS_MODEL, N_BITS)
         y_tr = train["Y"].to_numpy()
         X_va = morgan_matrix(valid["Drug"].tolist(), FP_RADIUS_MODEL, N_BITS)
@@ -118,33 +122,56 @@ def run_baseline(group):
 
 
 # ----------------------------------------------------------------------
-# (B) Leakage check on the split
+# (B) Leakage check -- nearest-neighbor Tanimoto, explicit reference set
 # ----------------------------------------------------------------------
+def nn_tanimoto(query_smiles, reference_smiles, radius=FP_RADIUS_LEAK, n_bits=N_BITS):
+    """For each QUERY molecule, the max Tanimoto similarity to any REFERENCE
+    molecule (its single nearest neighbor).
+
+    The reference set is an EXPLICIT argument because it encodes the QUESTION
+    being asked, and one number must never serve both roles:
+
+      * SPLIT audit  -> reference = train_val (all training-available mols).
+        "Is TDC's published split clean?" Seed-independent; a property of the
+        TDC split itself, not of any model. This is the default leakage check.
+
+      * MODEL attribution -> reference = that seed's train (637), the mols the
+        model ACTUALLY saw. "Did this model's test score benefit from overlap
+        with its own training data?" Seed-dependent; a property of the model.
+
+    Radius is FP_RADIUS_LEAK=3 (ECFP6) per the Receptor.AI audit spec -- note
+    this is deliberately NOT the modeling radius (FP_RADIUS_MODEL=2 / ECFP4).
+    Returns a numpy array of length len(query_smiles) (skipping unparseable).
+    """
+    ref_fps = [f for f in morgan_bitvects(reference_smiles, radius, n_bits)
+               if f is not None]
+    q_fps = morgan_bitvects(query_smiles, radius, n_bits)
+    nn = []
+    for f in q_fps:
+        if f is None:
+            continue
+        nn.append(max(DataStructs.BulkTanimotoSimilarity(f, ref_fps)))
+    return np.array(nn)
+
+
 def run_leakage_check(group):
     print("\n" + "=" * 70)
-    print("(B) LEAKAGE CHECK  --  NN Tanimoto, Morgan(r=3,2048), test vs train")
+    print("(B) LEAKAGE CHECK  --  NN Tanimoto, Morgan(r=3,2048)  [audit spec radius]")
     print("=" * 70)
 
     benchmark = group.get(BENCH)
     train_val = benchmark["train_val"]      # all training-available molecules
     test = benchmark["test"]
 
-    train_fps = morgan_bitvects(train_val["Drug"].tolist(), FP_RADIUS_LEAK, N_BITS)
-    test_fps = morgan_bitvects(test["Drug"].tolist(), FP_RADIUS_LEAK, N_BITS)
-    train_fps = [f for f in train_fps if f is not None]
-
-    nn_sim = []
-    for f in test_fps:
-        if f is None:
-            continue
-        sims = DataStructs.BulkTanimotoSimilarity(f, train_fps)
-        nn_sim.append(max(sims))
-    nn_sim = np.array(nn_sim)
+    # SPLIT AUDIT: reference is train_val (728), seed-independent property of the
+    # TDC split. This is the default check the project reports per endpoint.
+    nn_sim = nn_tanimoto(test["Drug"].tolist(), train_val["Drug"].tolist())
 
     median = float(np.median(nn_sim))
     mx = float(np.max(nn_sim))
     frac_ge_09 = float(np.mean(nn_sim >= 0.9))
     frac_eq_1 = float(np.mean(nn_sim >= 0.999))
+    print(f"  reference set               : train_val (n={len(train_val)})  [SPLIT audit]")
     print(f"  test molecules checked      : {len(nn_sim)}")
     print(f"  MEDIAN nearest-neighbor sim : {median:.4f}")
     print(f"  MAX    nearest-neighbor sim : {mx:.4f}")
