@@ -11,3 +11,4 @@ wheels/
 
 # Cached TDC benchmark download (no dataset versioning; never commit)
 data/
+2026.02.26.708193v1.full.pdf
