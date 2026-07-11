@@ -1,0 +1,465 @@
+{
+  "forced": [
+    {
+      "endpoint": "cyp2d6_substrate_carbonmangels",
+      "metric": "pr-auc",
+      "n_iterations": 6,
+      "seed_budget": 25,
+      "plateau_index": 3,
+      "plateau_iteration": 4,
+      "pre_plateau_best_index": 3,
+      "pre_plateau_best_iteration": 4,
+      "pre_plateau_best_spec": "v04_desc_morgan_rf_balanced",
+      "post_plateau_gain": false,
+      "locked_spec": "v04_desc_morgan_rf_balanced",
+      "rows": [
+        {
+          "iteration": 1,
+          "spec": "v01_desc_rf",
+          "metric": "pr-auc",
+          "mean": 0.608263671341384,
+          "ci_lo": 0.5558533644779479,
+          "ci_hi": 0.6606739782048202,
+          "ci_halfwidth": 0.052410306863436174,
+          "higher_is_better": true,
+          "post_plateau": false,
+          "ci_separable_vs_pre_plateau_best": false
+        },
+        {
+          "iteration": 2,
+          "spec": "v02_desc_lgbm",
+          "metric": "pr-auc",
+          "mean": 0.5837083472576587,
+          "ci_lo": 0.5223503631495116,
+          "ci_hi": 0.6450663313658059,
+          "ci_halfwidth": 0.06135798410814715,
+          "higher_is_better": true,
+          "post_plateau": false,
+          "ci_separable_vs_pre_plateau_best": false
+        },
+        {
+          "iteration": 3,
+          "spec": "v03_desc_morgan_rf",
+          "metric": "pr-auc",
+          "mean": 0.6178075870093477,
+          "ci_lo": 0.5678025770616861,
+          "ci_hi": 0.6678125969570092,
+          "ci_halfwidth": 0.05000500994766151,
+          "higher_is_better": true,
+          "post_plateau": false,
+          "ci_separable_vs_pre_plateau_best": false
+        },
+        {
+          "iteration": 4,
+          "spec": "v04_desc_morgan_rf_balanced",
+          "metric": "pr-auc",
+          "mean": 0.6254210933767334,
+          "ci_lo": 0.5733409329443915,
+          "ci_hi": 0.6775012538090752,
+          "ci_halfwidth": 0.052080160432341906,
+          "higher_is_better": true,
+          "post_plateau": false,
+          "ci_separable_vs_pre_plateau_best": false
+        },
+        {
+          "iteration": 5,
+          "spec": "v05_stacked_meta",
+          "metric": "pr-auc",
+          "mean": 0.6108890969036913,
+          "ci_lo": 0.5590499164376997,
+          "ci_hi": 0.6627282773696829,
+          "ci_halfwidth": 0.05183918046599153,
+          "higher_is_better": true,
+          "post_plateau": true,
+          "ci_separable_vs_pre_plateau_best": false
+        },
+        {
+          "iteration": 6,
+          "spec": "v06_late_fusion",
+          "metric": "pr-auc",
+          "mean": 0.6198366663576629,
+          "ci_lo": 0.5742134699945227,
+          "ci_hi": 0.665459862720803,
+          "ci_halfwidth": 0.045623196363140134,
+          "higher_is_better": true,
+          "post_plateau": true,
+          "ci_separable_vs_pre_plateau_best": false
+        }
+      ]
+    },
+    {
+      "endpoint": "cyp2c9_substrate_carbonmangels",
+      "metric": "pr-auc",
+      "n_iterations": 6,
+      "seed_budget": 25,
+      "plateau_index": 3,
+      "plateau_iteration": 4,
+      "pre_plateau_best_index": 2,
+      "pre_plateau_best_iteration": 3,
+      "pre_plateau_best_spec": "v03_desc_morgan_rf",
+      "post_plateau_gain": false,
+      "locked_spec": "v05_stacked_meta",
+      "rows": [
+        {
+          "iteration": 1,
+          "spec": "v01_desc_rf",
+          "metric": "pr-auc",
+          "mean": 0.40289472304579194,
+          "ci_lo": 0.3584636375607886,
+          "ci_hi": 0.4473258085307953,
+          "ci_halfwidth": 0.044431085485003324,
+          "higher_is_better": true,
+          "post_plateau": false,
+          "ci_separable_vs_pre_plateau_best": false
+        },
+        {
+          "iteration": 2,
+          "spec": "v02_desc_lgbm",
+          "metric": "pr-auc",
+          "mean": 0.38674567971575,
+          "ci_lo": 0.33947361403767645,
+          "ci_hi": 0.4340177453938236,
+          "ci_halfwidth": 0.04727206567807359,
+          "higher_is_better": true,
+          "post_plateau": false,
+          "ci_separable_vs_pre_plateau_best": false
+        },
+        {
+          "iteration": 3,
+          "spec": "v03_desc_morgan_rf",
+          "metric": "pr-auc",
+          "mean": 0.41523491628815956,
+          "ci_lo": 0.3710400042621095,
+          "ci_hi": 0.45942982831420964,
+          "ci_halfwidth": 0.044194912026050054,
+          "higher_is_better": true,
+          "post_plateau": false,
+          "ci_separable_vs_pre_plateau_best": false
+        },
+        {
+          "iteration": 4,
+          "spec": "v04_desc_morgan_rf_balanced",
+          "metric": "pr-auc",
+          "mean": 0.41489995026768844,
+          "ci_lo": 0.36797297944306917,
+          "ci_hi": 0.4618269210923077,
+          "ci_halfwidth": 0.04692697082461925,
+          "higher_is_better": true,
+          "post_plateau": false,
+          "ci_separable_vs_pre_plateau_best": false
+        },
+        {
+          "iteration": 5,
+          "spec": "v05_stacked_meta",
+          "metric": "pr-auc",
+          "mean": 0.4275923155664205,
+          "ci_lo": 0.38361248894762184,
+          "ci_hi": 0.4715721421852192,
+          "ci_halfwidth": 0.043979826618798686,
+          "higher_is_better": true,
+          "post_plateau": true,
+          "ci_separable_vs_pre_plateau_best": false
+        },
+        {
+          "iteration": 6,
+          "spec": "v06_late_fusion",
+          "metric": "pr-auc",
+          "mean": 0.425702904803244,
+          "ci_lo": 0.3843050953393865,
+          "ci_hi": 0.46710071426710154,
+          "ci_halfwidth": 0.04139780946385753,
+          "higher_is_better": true,
+          "post_plateau": true,
+          "ci_separable_vs_pre_plateau_best": false
+        }
+      ]
+    },
+    {
+      "endpoint": "dili",
+      "metric": "roc-auc",
+      "n_iterations": 6,
+      "seed_budget": 25,
+      "plateau_index": 3,
+      "plateau_iteration": 4,
+      "pre_plateau_best_index": 0,
+      "pre_plateau_best_iteration": 1,
+      "pre_plateau_best_spec": "v01_desc_rf",
+      "post_plateau_gain": false,
+      "locked_spec": "v01_desc_rf",
+      "rows": [
+        {
+          "iteration": 1,
+          "spec": "v01_desc_rf",
+          "metric": "roc-auc",
+          "mean": 0.8413224340308848,
+          "ci_lo": 0.8117340120611459,
+          "ci_hi": 0.8709108560006237,
+          "ci_halfwidth": 0.029588421969738925,
+          "higher_is_better": true,
+          "post_plateau": false,
+          "ci_separable_vs_pre_plateau_best": false
+        },
+        {
+          "iteration": 2,
+          "spec": "v02_desc_lgbm",
+          "metric": "roc-auc",
+          "mean": 0.8164185854346333,
+          "ci_lo": 0.7898179780535154,
+          "ci_hi": 0.8430191928157512,
+          "ci_halfwidth": 0.02660060738111788,
+          "higher_is_better": true,
+          "post_plateau": false,
+          "ci_separable_vs_pre_plateau_best": false
+        },
+        {
+          "iteration": 3,
+          "spec": "v03_desc_morgan_rf",
+          "metric": "roc-auc",
+          "mean": 0.8396571420834605,
+          "ci_lo": 0.8085134074165731,
+          "ci_hi": 0.870800876750348,
+          "ci_halfwidth": 0.031143734666887433,
+          "higher_is_better": true,
+          "post_plateau": false,
+          "ci_separable_vs_pre_plateau_best": false
+        },
+        {
+          "iteration": 4,
+          "spec": "v04_desc_morgan_rf_balanced",
+          "metric": "roc-auc",
+          "mean": 0.8362681341319366,
+          "ci_lo": 0.8035178548130053,
+          "ci_hi": 0.8690184134508678,
+          "ci_halfwidth": 0.03275027931893131,
+          "higher_is_better": true,
+          "post_plateau": false,
+          "ci_separable_vs_pre_plateau_best": false
+        },
+        {
+          "iteration": 5,
+          "spec": "v05_stacked_meta",
+          "metric": "roc-auc",
+          "mean": 0.8406053960715637,
+          "ci_lo": 0.8133821426512357,
+          "ci_hi": 0.8678286494918918,
+          "ci_halfwidth": 0.027223253420328004,
+          "higher_is_better": true,
+          "post_plateau": true,
+          "ci_separable_vs_pre_plateau_best": false
+        },
+        {
+          "iteration": 6,
+          "spec": "v06_late_fusion",
+          "metric": "roc-auc",
+          "mean": 0.8375027461067523,
+          "ci_lo": 0.8077628436707499,
+          "ci_hi": 0.8672426485427548,
+          "ci_halfwidth": 0.029739902436002462,
+          "higher_is_better": true,
+          "post_plateau": true,
+          "ci_separable_vs_pre_plateau_best": false
+        }
+      ]
+    }
+  ],
+  "separated": [
+    {
+      "endpoint": "solubility_aqsoldb",
+      "metric": "mae",
+      "n_iterations": 6,
+      "seed_budget": 5,
+      "first_separation_index": 1,
+      "first_separation_iteration": 2,
+      "first_separation_spec": "sol_v02_desc_lgbm",
+      "locked_spec": "sol_v02_desc_lgbm",
+      "rows": [
+        {
+          "iteration": 1,
+          "spec": "sol_v01_morgan_lgbm",
+          "mean": 1.2605981194306277,
+          "ci_lo": 1.042682156291405,
+          "ci_hi": 1.4785140825698504,
+          "ci_halfwidth": 0.2179159631392226,
+          "higher_is_better": false
+        },
+        {
+          "iteration": 2,
+          "spec": "sol_v02_desc_lgbm",
+          "mean": 0.8262617397956926,
+          "ci_lo": 0.6753534706568107,
+          "ci_hi": 0.9771700089345745,
+          "ci_halfwidth": 0.1509082691388819,
+          "higher_is_better": false
+        },
+        {
+          "iteration": 3,
+          "spec": "sol_v03_desc_morgan_lgbm_tuned",
+          "mean": 0.8274239532655612,
+          "ci_lo": 0.6815512006153823,
+          "ci_hi": 0.97329670591574,
+          "ci_halfwidth": 0.1458727526501788,
+          "higher_is_better": false
+        },
+        {
+          "iteration": 4,
+          "spec": "sol_v04_stacked_reg",
+          "mean": 0.8171795489861253,
+          "ci_lo": 0.6672761269510983,
+          "ci_hi": 0.9670829710211524,
+          "ci_halfwidth": 0.14990342203502702,
+          "higher_is_better": false
+        },
+        {
+          "iteration": 5,
+          "spec": "sol_v05_late_fusion_reg",
+          "mean": 0.8184789213677875,
+          "ci_lo": 0.6653547094955935,
+          "ci_hi": 0.9716031332399816,
+          "ci_halfwidth": 0.15312421187219405,
+          "higher_is_better": false
+        },
+        {
+          "iteration": 6,
+          "spec": "sol_v06_two_stage_residual",
+          "mean": 0.8232103187632864,
+          "ci_lo": 0.6709963075520595,
+          "ci_hi": 0.9754243299745133,
+          "ci_halfwidth": 0.15221401121122696,
+          "higher_is_better": false
+        }
+      ]
+    },
+    {
+      "endpoint": "caco2_wang",
+      "metric": "mae",
+      "n_iterations": 6,
+      "seed_budget": 25,
+      "first_separation_index": 1,
+      "first_separation_iteration": 2,
+      "first_separation_spec": "caco_v02_desc_lgbm",
+      "locked_spec": "caco_v02_desc_lgbm",
+      "rows": [
+        {
+          "iteration": 1,
+          "spec": "caco_v01_morgan_lgbm",
+          "mean": 0.4387351268931255,
+          "ci_lo": 0.41915664654473406,
+          "ci_hi": 0.45831360724151693,
+          "ci_halfwidth": 0.019578480348391422,
+          "higher_is_better": false
+        },
+        {
+          "iteration": 2,
+          "spec": "caco_v02_desc_lgbm",
+          "mean": 0.36450377985737553,
+          "ci_lo": 0.3476389770084497,
+          "ci_hi": 0.38136858270630136,
+          "ci_halfwidth": 0.01686480284892585,
+          "higher_is_better": false
+        },
+        {
+          "iteration": 3,
+          "spec": "caco_v03_desc_morgan_lgbm_tuned",
+          "mean": 0.364308783484141,
+          "ci_lo": 0.3468125056608046,
+          "ci_hi": 0.3818050613074773,
+          "ci_halfwidth": 0.01749627782333636,
+          "higher_is_better": false
+        },
+        {
+          "iteration": 4,
+          "spec": "caco_v04_stacked_reg",
+          "mean": 0.3614288425859097,
+          "ci_lo": 0.3479526530378492,
+          "ci_hi": 0.37490503213397014,
+          "ci_halfwidth": 0.013476189548060454,
+          "higher_is_better": false
+        },
+        {
+          "iteration": 5,
+          "spec": "caco_v05_late_fusion_reg",
+          "mean": 0.3635410586286896,
+          "ci_lo": 0.34861379499734546,
+          "ci_hi": 0.3784683222600337,
+          "ci_halfwidth": 0.014927263631344135,
+          "higher_is_better": false
+        },
+        {
+          "iteration": 6,
+          "spec": "caco_v06_two_stage_residual",
+          "mean": 0.364585814471065,
+          "ci_lo": 0.34775874615031793,
+          "ci_hi": 0.381412882791812,
+          "ci_halfwidth": 0.01682706832074706,
+          "higher_is_better": false
+        }
+      ]
+    },
+    {
+      "endpoint": "lipophilicity_astrazeneca",
+      "metric": "mae",
+      "n_iterations": 6,
+      "seed_budget": 5,
+      "first_separation_index": 1,
+      "first_separation_iteration": 2,
+      "first_separation_spec": "caco_v02_desc_lgbm",
+      "locked_spec": "caco_v02_desc_lgbm",
+      "rows": [
+        {
+          "iteration": 1,
+          "spec": "caco_v01_morgan_lgbm",
+          "mean": 0.6682193307627656,
+          "ci_lo": 0.6385529302183776,
+          "ci_hi": 0.6978857313071537,
+          "ci_halfwidth": 0.029666400544388117,
+          "higher_is_better": false
+        },
+        {
+          "iteration": 2,
+          "spec": "caco_v02_desc_lgbm",
+          "mean": 0.532891213019357,
+          "ci_lo": 0.5025725364575814,
+          "ci_hi": 0.5632098895811327,
+          "ci_halfwidth": 0.030318676561775625,
+          "higher_is_better": false
+        },
+        {
+          "iteration": 3,
+          "spec": "caco_v03_desc_morgan_lgbm_tuned",
+          "mean": 0.5245659888787821,
+          "ci_lo": 0.49681799457438924,
+          "ci_hi": 0.552313983183175,
+          "ci_halfwidth": 0.027747994304392887,
+          "higher_is_better": false
+        },
+        {
+          "iteration": 4,
+          "spec": "caco_v04_stacked_reg",
+          "mean": 0.5217329294558783,
+          "ci_lo": 0.49694724232556886,
+          "ci_hi": 0.5465186165861878,
+          "ci_halfwidth": 0.024785687130309476,
+          "higher_is_better": false
+        },
+        {
+          "iteration": 5,
+          "spec": "caco_v05_late_fusion_reg",
+          "mean": 0.530484194623955,
+          "ci_lo": 0.5046050998646431,
+          "ci_hi": 0.556363289383267,
+          "ci_halfwidth": 0.025879094759311907,
+          "higher_is_better": false
+        },
+        {
+          "iteration": 6,
+          "spec": "caco_v06_two_stage_residual",
+          "mean": 0.53012407515026,
+          "ci_lo": 0.5001903389850403,
+          "ci_hi": 0.5600578113154798,
+          "ci_halfwidth": 0.02993373616521977,
+          "higher_is_better": false
+        }
+      ]
+    }
+  ]
+}

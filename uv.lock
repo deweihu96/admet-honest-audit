@@ -1017,10 +1017,14 @@ download = [
     { name = "pytdc" },
     { name = "setuptools" },
 ]
+figures = [
+    { name = "matplotlib" },
+]
 
 [package.metadata]
 requires-dist = [
     { name = "lightgbm", specifier = ">=4.6.0" },
+    { name = "matplotlib", marker = "extra == 'figures'", specifier = ">=3.8" },
     { name = "numpy", specifier = ">=1.26.4" },
     { name = "pandas", specifier = ">=2.3.3" },
     { name = "pytdc", marker = "extra == 'download'", specifier = "==1.1.15" },
@@ -1029,7 +1033,7 @@ requires-dist = [
     { name = "scipy", specifier = ">=1.11" },
     { name = "setuptools", marker = "extra == 'download'", specifier = "<81" },
 ]
-provides-extras = ["download"]
+provides-extras = ["download", "figures"]
 
 [[package]]
 name = "hf-xet"

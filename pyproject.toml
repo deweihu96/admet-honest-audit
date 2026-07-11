@@ -19,3 +19,5 @@ dependencies = [
 # never imports tdc. Installing this extra pulls torch/numba/tiledbsoma; the core
 # install does not. Cached data ships with the repo, so reproduction needs none.
 download = ["pytdc==1.1.15", "setuptools<81"]
+# Only needed to regenerate the robustness figures (figures/ ship committed).
+figures = ["matplotlib>=3.8"]
