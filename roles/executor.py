@@ -15,9 +15,22 @@ from dataclasses import dataclass
 
 import numpy as np
 from scipy import stats
-from tdc import Evaluator
+from scipy.stats import spearmanr
+from sklearn.metrics import average_precision_score, roc_auc_score, mean_absolute_error
 
 from features import build_matrix
+
+# Validation metrics. These are byte-identical to tdc.Evaluator(name)(y, p) for the
+# metrics ADMET uses (tdc dispatches roc-auc->roc_auc_score, pr-auc->
+# average_precision_score, mae->mean_absolute_error, spearman->spearmanr[0]), so the
+# validation numbers are unchanged. Kept local to avoid a runtime tdc dependency and
+# to keep the iteration path from importing testwall (the wall).
+_METRIC_FN = {
+    "pr-auc": average_precision_score,
+    "roc-auc": roc_auc_score,
+    "mae": mean_absolute_error,
+    "spearman": lambda y, p: spearmanr(y, p).correlation,
+}
 
 
 @dataclass(frozen=True)
@@ -54,7 +67,7 @@ def train_and_score(model_spec, adapter, seeds=None) -> ScoreResult:
     features = model_spec.FEATURES
     build = model_spec.build
     is_clf = adapter.task_type == "classification"
-    ev = Evaluator(name=adapter.metric_name)
+    ev = _METRIC_FN[adapter.metric_name]
 
     scores = []
     for s in seeds:

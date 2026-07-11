@@ -1007,9 +1007,14 @@ dependencies = [
     { name = "lightgbm" },
     { name = "numpy" },
     { name = "pandas" },
-    { name = "pytdc" },
     { name = "rdkit" },
     { name = "scikit-learn" },
+    { name = "scipy" },
+]
+
+[package.optional-dependencies]
+download = [
+    { name = "pytdc" },
     { name = "setuptools" },
 ]
 
@@ -1018,11 +1023,13 @@ requires-dist = [
     { name = "lightgbm", specifier = ">=4.6.0" },
     { name = "numpy", specifier = ">=1.26.4" },
     { name = "pandas", specifier = ">=2.3.3" },
-    { name = "pytdc", specifier = ">=1.1.15" },
+    { name = "pytdc", marker = "extra == 'download'", specifier = "==1.1.15" },
     { name = "rdkit", specifier = ">=2023.9.6" },
     { name = "scikit-learn", specifier = ">=1.9.0" },
-    { name = "setuptools", specifier = "<81" },
+    { name = "scipy", specifier = ">=1.11" },
+    { name = "setuptools", marker = "extra == 'download'", specifier = "<81" },
 ]
+provides-extras = ["download"]
 
 [[package]]
 name = "hf-xet"

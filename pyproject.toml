@@ -8,8 +8,14 @@ dependencies = [
     "lightgbm>=4.6.0",
     "numpy>=1.26.4",
     "pandas>=2.3.3",
-    "pytdc>=1.1.15",
     "rdkit>=2023.9.6",
     "scikit-learn>=1.9.0",
-    "setuptools<81",
+    "scipy>=1.11",
 ]
+
+[project.optional-dependencies]
+# PyTDC is ONLY needed to download endpoints not already cached under data/.
+# The runtime pipeline reads cached CSVs + rdkit + lightgbm + sklearn/scipy and
+# never imports tdc. Installing this extra pulls torch/numba/tiledbsoma; the core
+# install does not. Cached data ships with the repo, so reproduction needs none.
+download = ["pytdc==1.1.15", "setuptools<81"]

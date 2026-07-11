@@ -38,23 +38,34 @@ set is reused. This isolation is the substance of the "is this honest" claim.
 
 ### Environment (fresh clone)
 Python 3.11 (pinned in `.python-version`); [uv](https://docs.astral.sh/uv/) manages
-the env. The `setuptools<81` caveat (PyTDC 1.1.15 imports the removed
-`pkg_resources`) is **already pinned in `pyproject.toml`**, so no manual step:
+the env. The runtime pipeline is **rdkit + lightgbm + scikit-learn/scipy + pandas** —
+PyTDC (and its torch/numba/tiledbsoma stack) is **not** a runtime dependency, so the
+core install is small and works on any platform (macOS, Linux, no CUDA required):
 
 ```bash
-uv sync                       # builds .venv from pyproject.toml + uv.lock
-uv run python -c "import tdc, rdkit, lightgbm, sklearn; print('env OK')"
+uv sync                       # builds .venv from pyproject.toml + uv.lock (no torch/tdc)
+uv run python -c "import rdkit, lightgbm, sklearn, scipy; print('env OK')"
+```
+
+On macOS, LightGBM needs the OpenMP runtime once: `brew install libomp`.
+
+PyTDC is only needed to **download** endpoints not already cached (see Data). Install
+that optional extra only if you need a fresh download:
+
+```bash
+uv sync --extra download      # adds pytdc (pulls torch/numba); NOT needed to reproduce
 ```
 
 ### Data
-The 22 ADMET endpoints are cached as CSVs under `data/admet_group/<endpoint>/{train_val,test}.csv`.
-The adapter (`benchmarks/tdc_admet.py`) reads them **directly** (not through PyTDC
-at runtime) and reproduces TDC's scaffold train/valid split with a verbatim-vendored
-splitter (`benchmarks/_scaffold_split.py`). This pins reproducibility to a fixed
-data snapshot (**PyTDC 1.1.15**) — which matters, because TDC has no dataset
-versioning (see the leakage findings). `data/` is gitignored; to repopulate a
-missing endpoint: `TDCAdmetAdapter.download_endpoint("<name>")` (the only PyTDC
-runtime path).
+The 22 ADMET endpoints **ship with the repo**, cached as CSVs under
+`data/admet_group/<endpoint>/{train_val,test}.csv`, so a fresh clone reproduces with
+**no download**. The adapter (`benchmarks/tdc_admet.py`) reads them **directly** (not
+through PyTDC at runtime) and reproduces TDC's scaffold train/valid split with a
+verbatim-vendored splitter (`benchmarks/_scaffold_split.py`). This pins reproducibility
+to a fixed data snapshot (**PyTDC 1.1.15**) — which matters, because TDC has no dataset
+versioning (see the leakage findings). To (re)populate an endpoint from scratch (needs
+`uv sync --extra download`): `TDCAdmetAdapter.download_endpoint("<name>")` (the only
+PyTDC path anywhere).
 
 ### One endpoint, end to end (~2–3 min)
 Runs the full loop on cyp2d6_substrate and takes the single test read:

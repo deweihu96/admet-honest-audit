@@ -84,7 +84,12 @@ class TDCAdmetAdapter(BenchmarkAdapter):
         """One-time cache population via PyTDC (needs the setuptools<81 pin).
         Writes data/admet_group/<endpoint>/{train_val,test}.csv. Not called by
         the loop; here only so uncached endpoints can be fetched."""
-        from tdc.benchmark_group import admet_group
+        try:
+            from tdc.benchmark_group import admet_group
+        except ImportError as e:
+            raise ImportError(
+                "Downloading endpoints requires: uv sync --extra download. "
+                "Cached endpoints in data/ do not need this.") from e
         g = admet_group(path=data_root)
         g.get(endpoint)      # materializes the cached CSVs under data_root
         return os.path.join(data_root, "admet_group", endpoint.lower())

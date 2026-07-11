@@ -9,9 +9,13 @@ wheels/
 # Virtual environments
 .venv
 
-# Cached TDC benchmark download (no dataset versioning; never commit)
-data/
+# Cached TDC benchmark CSVs (data/admet_group/) ARE committed so a fresh clone
+# reproduces with no download. Snapshot is PyTDC 1.1.15; TDC has no dataset
+# versioning, so this pins reproducibility to a fixed snapshot.
 2026.02.26.708193v1.full.pdf
 stage6.out
 stage6.sbatch
 stage6_cleanup.py
+
+# macOS
+.DS_Store
