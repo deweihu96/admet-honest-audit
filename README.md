@@ -40,14 +40,16 @@ set is reused. This isolation is the substance of the "is this honest" claim.
 Python 3.11 (pinned in `.python-version`); [uv](https://docs.astral.sh/uv/) manages
 the env. The runtime pipeline is **rdkit + lightgbm + scikit-learn/scipy + pandas** —
 PyTDC (and its torch/numba/tiledbsoma stack) is **not** a runtime dependency, so the
-core install is small and works on any platform (macOS, Linux, no CUDA required):
+core install is small and works on any platform (macOS, Linux, no CUDA required).
+
+**macOS: `brew install libomp` before `uv sync`** (LightGBM's `.dylib` links the
+OpenMP runtime; without it `import lightgbm` fails to load). Linux wheels bundle it.
 
 ```bash
+brew install libomp           # macOS only, one-time (skip on Linux)
 uv sync                       # builds .venv from pyproject.toml + uv.lock (no torch/tdc)
 uv run python -c "import rdkit, lightgbm, sklearn, scipy; print('env OK')"
 ```
-
-On macOS, LightGBM needs the OpenMP runtime once: `brew install libomp`.
 
 PyTDC is only needed to **download** endpoints not already cached (see Data). Install
 that optional extra only if you need a fresh download:
@@ -164,9 +166,10 @@ FINDINGS_MULTI.md / LEADERBOARD_*.md / SOTA_PRIOR*.md   results & frozen priors
 verify_stage3/4/5.py, build_metric_map.py, verify_direction.py   reproducibility checks [kept]
 ```
 
-Older per-endpoint scripts (`iterate_*.py`, `data_split_*.py`, `final_test_eval_*.py`,
-and analysis scratch) from the staged development are **retained for reference** —
-each stage was verified to reproduce the validated numbers against its predecessor
-(visible in the commit history), so they document the development trail rather than
-clutter it. Their planned removal (Stage 6) was deferred under compute contention;
-the consolidated pipeline above does not depend on them.
+The older per-endpoint scripts (`iterate_*.py`, `data_split_*.py`, `final_test_eval_*.py`,
+and the stage1/stage2 migration harnesses) from the staged development have been
+**removed** (Stage 6 cleanup) — they were dead code that the consolidated pipeline above
+does not import. The staged refactor and its per-stage regression checks remain fully
+visible in the git history, which is the research trail. The `verify_stage3/4/5.py`,
+`build_metric_map.py`, and `verify_direction.py` reproducibility checks are self-standing
+and kept (the last two use PyTDC's metadata, so they need `uv sync --extra download`).
