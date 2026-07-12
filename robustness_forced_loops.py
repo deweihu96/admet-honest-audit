@@ -6,49 +6,61 @@ with force_full=True (do not stop at the plateau) over the full candidate stream
 and ask whether ANY post-plateau iteration is CI-separable (arbiter.beats) from the
 pre-plateau best. This is a robustness demonstration, NOT a climb.
 
-The candidate stream is the proposer. We have 6 model specs per task family, so the
-stream caps the loop at 6 even with max_loops=15 -- that real number is reported.
-Validation only; test is never touched here.
+The candidate stream is the proposer: 15 legitimate model specs per task family
+(fingerprint radius/bit-size/type, base-learner family, imbalance handling,
+compositions). With max_loops as a non-binding ceiling, all 15 run and the real
+count is reported. Validation only; test is never touched here.
 
     uv run --extra figures python robustness_forced_loops.py
 """
 import json
 import os
+import warnings
+
+warnings.filterwarnings("ignore")   # sklearn feature-name notices; do not affect numbers
 
 from config import Config
 from run import Orchestrator, load_specs
 from roles import arbiter
 
 FIGDIR = "figures"
-MAX_LOOPS = 15
+# Non-binding ceiling: the 15-candidate stream length is the real iteration count
+# (reported honestly), not max_loops. Set above 15 so nothing is truncated by the cap.
+MAX_LOOPS = 20
 
-# Classification, plateau regime (small endpoints, 25-seed budget). CLF stream.
+# Classification, plateau regime (small endpoints, 25-seed budget). 15 candidates:
+# the original 6 plus 9 legitimate variations spanning fingerprint radius/bit-size/
+# type, base-learner family, imbalance handling, and compositions (see each spec's
+# docstring). All go through the SAME arbiter discipline.
 CLF = ["v01_desc_rf", "v02_desc_lgbm", "v03_desc_morgan_rf",
-       "v04_desc_morgan_rf_balanced", "v05_stacked_meta", "v06_late_fusion"]
+       "v04_desc_morgan_rf_balanced", "v05_stacked_meta", "v06_late_fusion",
+       "v07_morgan_lgbm", "v08_morgan_r3_rf_balanced", "v09_maccs_rf_balanced",
+       "v10_desc_morgan_r3_rf_balanced", "v11_desc_morgan1024_lgbm",
+       "v12_desc_morgan_extratrees_balanced", "v13_desc_morgan_histgb",
+       "v14_desc_morgan_lgbm_balanced", "v15_desc_logreg_balanced"]
 FORCED = {
     "cyp2d6_substrate_carbonmangels": CLF,
     "cyp2c9_substrate_carbonmangels": CLF,
     "dili": CLF,
 }
 
-# Endpoints that DID separate in the validated runs (regression, mae). Their own
-# streams (sol_* / caco_*; lipophilicity used the REG=caco_* stream in run_multi).
+# Positive control: solubility (which DID separate) run through a matching 15-spec
+# EXPANDED regression stream. Confirms the descriptor separation still fires early
+# and that none of the 9 extra candidates spuriously beat it.
+SOL15 = ["sol_v01_morgan_lgbm", "sol_v02_desc_lgbm", "sol_v03_desc_morgan_lgbm_tuned",
+         "sol_v04_stacked_reg", "sol_v05_late_fusion_reg", "sol_v06_two_stage_residual",
+         "sol_v07_morgan_r3_lgbm", "sol_v08_maccs_lgbm", "sol_v09_desc_morgan_r3_lgbm",
+         "sol_v10_desc_morgan1024_lgbm", "sol_v11_desc_morgan_rf",
+         "sol_v12_desc_morgan_extratrees", "sol_v13_desc_morgan_histgb",
+         "sol_v14_desc_ridge", "sol_v15_desc_morgan_lgbm_deep"]
 SEP = {
-    "solubility_aqsoldb": ["sol_v01_morgan_lgbm", "sol_v02_desc_lgbm",
-                           "sol_v03_desc_morgan_lgbm_tuned", "sol_v04_stacked_reg",
-                           "sol_v05_late_fusion_reg", "sol_v06_two_stage_residual"],
-    "caco2_wang": ["caco_v01_morgan_lgbm", "caco_v02_desc_lgbm",
-                   "caco_v03_desc_morgan_lgbm_tuned", "caco_v04_stacked_reg",
-                   "caco_v05_late_fusion_reg", "caco_v06_two_stage_residual"],
-    "lipophilicity_astrazeneca": ["caco_v01_morgan_lgbm", "caco_v02_desc_lgbm",
-                                  "caco_v03_desc_morgan_lgbm_tuned", "caco_v04_stacked_reg",
-                                  "caco_v05_late_fusion_reg", "caco_v06_two_stage_residual"],
+    "solubility_aqsoldb": SOL15,
 }
 
 
 def run_forced(endpoint, versions):
-    """force_full=True, max_loops=15: run the whole stream through the SAME
-    arbiter discipline without stopping at the plateau. Validation only."""
+    """force_full=True, non-binding max_loops: run the whole 15-candidate stream
+    through the SAME arbiter discipline without stopping at the plateau. Validation only."""
     cfg = Config(endpoint, novelty_tier="middle", force_full=True, max_loops=MAX_LOOPS)
     orch = Orchestrator(cfg)
     orch.run_loop(load_specs(versions))
@@ -142,8 +154,8 @@ def plot_A(forced, path):
         ax.set_ylabel(d["metric"])
         ax.set_xticks(xs)
         ax.legend(fontsize=7, loc="best")
-    fig.suptitle("Plot A -- Plateau holds under forced iteration (force_full=True, max_loops=15). "
-                 "CIs shown: later iterations overlap the pre-plateau best.",
+    fig.suptitle("Plot A -- Plateau holds under forced iteration over the full 15-candidate stream "
+                 "(force_full=True). CIs shown: later iterations overlap the pre-plateau best.",
                  fontsize=11)
     fig.tight_layout(rect=[0, 0, 1, 0.94])
     fig.savefig(path + ".png", dpi=150)
@@ -198,7 +210,8 @@ def main():
     print("=" * 92)
     for d in forced:
         print(f"\n{d['endpoint']}  [{d['metric']}, {d['seed_budget']} seeds, "
-              f"ran {d['n_iterations']} iterations -- stream caps at 6]")
+              f"ran {d['n_iterations']} iterations -- full 15-candidate stream, "
+              f"max_loops non-binding]")
         print(f"  plateau at iteration {d['plateau_iteration']}; "
               f"pre-plateau best = it {d['pre_plateau_best_iteration']} "
               f"({d['pre_plateau_best_spec']}); locked {d['locked_spec']}")

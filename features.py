@@ -11,7 +11,8 @@ _DESC_NAMES = [d[0] for d in Descriptors._descList]
 _CALC = MoleculeDescriptors.MolecularDescriptorCalculator(_DESC_NAMES)
 _cache = {}
 
-DIMS = {"morgan_r2": 2048, "morgan_r3": 2048, "maccs": 167, "desc": len(_DESC_NAMES)}
+DIMS = {"morgan_r2": 2048, "morgan_r3": 2048, "morgan_r2_1024": 1024,
+        "maccs": 167, "desc": len(_DESC_NAMES)}
 
 
 def _morgan(m, r, n):
@@ -31,6 +32,8 @@ def _block(smi, block):
         v = _morgan(m, 2, 2048)
     elif block == "morgan_r3":
         v = _morgan(m, 3, 2048)
+    elif block == "morgan_r2_1024":
+        v = _morgan(m, 2, 1024)
     elif block == "maccs":
         v = (np.zeros(167, dtype=np.float32) if m is None
              else np.array(MACCSkeys.GenMACCSKeys(m), dtype=np.float32))
