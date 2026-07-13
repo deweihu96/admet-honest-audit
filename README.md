@@ -15,6 +15,8 @@ the headline; the one test read carries a bootstrap CI. We do **not** claim to
 match SOTA on solubility — our honest estimate is the validation number, the test
 point is a favorable draw, and that split is contaminated.
 
+[Here is a short intro video on YouTube.](https://www.youtube.com/watch?v=BN4r4DUT9cg)
+
 ## Architecture — four roles and a structural test wall
 
 Honesty is enforced by *what each module can import*, not by good intentions. The
