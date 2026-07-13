@@ -1,7 +1,11 @@
-# nest AI — an agent that climbs the TDC ADMET leaderboard honestly, and audits it while doing so
+<p align="center">
+  <img src="icon.png" alt="ADMET-honest-audit logo: a confidence-interval mark — an error bar with a point estimate — because the honest error bar is the whole point" width="640">
+</p>
+
+# ADMET-honest-audit — an agent that climbs the TDC ADMET leaderboard honestly, and audits it while doing so
 
 **What this is.** ML leaderboards look precise, but a Feb 2026 audit of the TDC
-ADMET benchmark ([Nurislamov et al., bioRxiv 2026.02.26.708193](https://doi.org/10.1101/2026.02.26.708193))
+ADMET benchmark ([Koleiev et al., bioRxiv 2026.02.26.708193](https://doi.org/10.64898/2026.02.26.708193))
 found most top entries fail on non-reproducibility or data leakage, and that
 *overfitting the open test set* moves a model up the board — so climbing and
 cheating can be the same act. `nest AI` is an agentic pipeline (driven by Claude
