@@ -1,7 +1,3 @@
-<p align="center">
-  <img src="icon.png" alt="ADMET-honest-audit logo: a confidence-interval mark — an error bar with a point estimate — because the honest error bar is the whole point" width="640">
-</p>
-
 # ADMET-honest-audit — an agent that climbs the TDC ADMET leaderboard honestly, and audits it while doing so
 
 **What this is.** ML leaderboards look precise, but a Feb 2026 audit of the TDC
