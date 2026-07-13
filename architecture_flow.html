@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Architecture Flow — Honest AI ADMET</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#FBFAF7; --ink:#2A2620; --slate:#6B6459; --line:#E0D9CD;
+    --teal:#0E7C86; --teal-soft:#0E7C860f; --amber:#C0733A; --amber-soft:#C0733A0f;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{background:var(--paper);color:var(--ink);font-family:"Inter",system-ui,sans-serif;
+    -webkit-font-smoothing:antialiased;min-height:100vh;display:flex;flex-direction:column;
+    align-items:center;justify-content:center;padding:4vh 3vw;gap:1.2rem}
+  .head{width:min(1280px,97vw)}
+  .eyebrow{font-family:"JetBrains Mono",monospace;font-size:.8rem;letter-spacing:.2em;
+    text-transform:uppercase;color:var(--teal);display:flex;align-items:center;gap:.8rem;margin-bottom:.7rem}
+  .eyebrow::before{content:"";width:52px;border-top:2px solid var(--teal)}
+  h1{font-family:"Fraunces",serif;font-weight:500;font-size:clamp(1.9rem,3.3vw,2.8rem);
+     line-height:1.06;letter-spacing:-.01em}
+  .sub{color:var(--slate);font-size:clamp(.98rem,1.4vw,1.2rem);max-width:70ch;line-height:1.5;margin-top:.4rem}
+  svg{width:min(1280px,97vw);height:auto;display:block}
+
+  .box{fill:#fff;stroke:var(--line);stroke-width:1.5}
+  .box.audit{stroke:#E2C9B4}
+  .box.human{stroke:var(--slate);stroke-dasharray:none}
+  .box.test{fill:#fff;stroke:#E2C9B4}
+  .loopzone{fill:var(--teal-soft);stroke:var(--teal);stroke-width:1.5;stroke-dasharray:7 6}
+  .testzone{fill:var(--amber-soft);stroke:none}
+
+  .role-tag{font-family:"JetBrains Mono",monospace;font-size:12.5px;letter-spacing:.12em;
+    text-transform:uppercase;fill:var(--teal)}
+  .role-tag.a{fill:var(--amber)} .role-tag.s{fill:var(--slate)}
+  .role-name{font-family:"Fraunces",serif;font-weight:500;font-size:25px;fill:var(--ink)}
+  .role-desc{font-family:"Inter",sans-serif;font-size:14.5px;fill:var(--slate)}
+  .role-kind{font-family:"JetBrains Mono",monospace;font-size:11.5px;letter-spacing:.06em;fill:var(--slate)}
+  .zone-label{font-family:"JetBrains Mono",monospace;font-size:13px;letter-spacing:.16em;
+    text-transform:uppercase;fill:var(--teal)}
+  .wall-label{font-family:"JetBrains Mono",monospace;font-size:13px;letter-spacing:.16em;
+    text-transform:uppercase;fill:var(--amber)}
+  /* paper halo behind edge labels so a line passing under them reads clean */
+  .flow-label{font-family:"JetBrains Mono",monospace;font-size:12.5px;fill:var(--slate);
+    paint-order:stroke;stroke:var(--paper);stroke-width:6px;stroke-linejoin:round;stroke-linecap:round}
+  .flow-label.t{fill:var(--amber)} .flow-label.v{fill:var(--teal)}
+
+  .edge{fill:none;stroke:var(--slate);stroke-width:2}
+  .edge.v{stroke:var(--teal)}
+  .edge.t{stroke:var(--amber)}
+  .edge.dash{stroke-dasharray:6 5}
+  .edge.loop{stroke:var(--teal);stroke-width:2}
+
+  .wall-line{stroke:var(--amber);stroke-width:2.5;stroke-dasharray:10 7}
+
+  .legend{width:min(1280px,97vw);display:flex;gap:1.8rem;flex-wrap:wrap;
+    font-family:"JetBrains Mono",monospace;font-size:12.5px;color:var(--slate)}
+  .legend span{display:flex;align-items:center;gap:.5rem}
+  .sw{width:26px;height:0;border-top-width:2.5px;border-top-style:solid}
+  .sw.v{border-color:var(--teal)} .sw.t{border-color:var(--amber)}
+  .sw.d{border-top-style:dashed;border-color:var(--amber)}
+</style>
+</head>
+<body>
+  <div class="head">
+    <div class="eyebrow">Architecture · Data flow</div>
+    <h1>The climb loop runs on validation. The test set is crossed once.</h1>
+    <p class="sub">Follow the arrows: every model is designed, trained, and judged without the test set. Only the walled auditor (molecules, no labels) and a single final evaluation ever cross the line.</p>
+  </div>
+
+  <svg viewBox="0 0 1280 940" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Data-flow architecture diagram">
+    <defs>
+      <marker id="ar-slate" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+        <path d="M1 1 L9 5 L1 9" fill="none" stroke="#6B6459" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></marker>
+      <marker id="ar-teal" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+        <path d="M1 1 L9 5 L1 9" fill="none" stroke="#0E7C86" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></marker>
+      <marker id="ar-amber" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+        <path d="M1 1 L9 5 L1 9" fill="none" stroke="#C0733A" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></marker>
+    </defs>
+
+    <!-- ================= INPUTS ================= -->
+    <!-- SOTA prior -->
+    <rect class="box" x="60" y="40" width="250" height="66" rx="12"/>
+    <text class="role-tag" x="80" y="68">Prior</text>
+    <text class="role-name" x="80" y="93" style="font-size:19px">SOTA prior · candidates</text>
+
+    <!-- Human idea injection -->
+    <rect class="box human" x="360" y="40" width="270" height="66" rx="12"/>
+    <text class="role-tag s" x="380" y="68">Human · idea</text>
+    <text class="role-desc" x="380" y="92">inject a design the agent didn't reach</text>
+
+    <!-- Human test trigger -->
+    <rect class="box human" x="980" y="40" width="240" height="66" rx="12"/>
+    <text class="role-tag s" x="1000" y="68">Human · trigger</text>
+    <text class="role-desc" x="1000" y="92">command: test now</text>
+
+    <!-- ================= LOOP ZONE ================= -->
+    <rect class="loopzone" x="40" y="150" width="890" height="470" rx="26"/>
+    <rect x="60" y="138" width="330" height="24" fill="#FBFAF7"/>
+    <text class="zone-label" x="72" y="155">Iteration loop · validation only</text>
+
+    <!-- Proposer -->
+    <rect class="box" x="90" y="200" width="300" height="130" rx="14"/>
+    <text class="role-tag" x="112" y="232">● Agent · Proposer</text>
+    <text class="role-name" x="112" y="264">Proposer</text>
+    <text class="role-desc" x="112" y="290">designs the next model version</text>
+    <text class="role-kind" x="112" y="314">Claude Code · sees validation only</text>
+
+    <!-- Executor -->
+    <rect class="box" x="480" y="200" width="300" height="130" rx="14"/>
+    <text class="role-tag" x="502" y="232">● Agent · Executor</text>
+    <text class="role-name" x="502" y="264">Executor</text>
+    <text class="role-desc" x="502" y="290">trains · scores on validation</text>
+    <text class="role-kind" x="502" y="314">no test path, by construction</text>
+
+    <!-- Arbiter -->
+    <rect class="box" x="480" y="430" width="300" height="130" rx="14"/>
+    <text class="role-tag" x="502" y="462">▤ Deterministic · Arbiter</text>
+    <text class="role-name" x="502" y="494">Arbiter</text>
+    <text class="role-desc" x="502" y="520">promote only on non-overlapping CIs;</text>
+    <text class="role-desc" x="502" y="538">ties → simpler model; detect plateau</text>
+
+    <!-- ================= AUDITOR (right, walled) ================= -->
+    <rect class="box audit" x="990" y="200" width="230" height="180" rx="14"/>
+    <text class="role-tag a" x="1012" y="232">◆ Walled · Auditor</text>
+    <text class="role-name" x="1012" y="264">Auditor</text>
+    <text class="role-desc" x="1012" y="290">touches test molecules</text>
+    <text class="role-desc" x="1012" y="308">for leakage — never labels.</text>
+    <text class="role-desc" x="1012" y="332">returns a summary verdict:</text>
+    <text class="role-kind" x="1012" y="356">Tanimoto + InChIKey axes</text>
+
+    <!-- Lock -->
+    <rect class="box" x="480" y="640" width="300" height="58" rx="12"/>
+    <text class="role-name" x="502" y="676" style="font-size:20px">Lock final model</text>
+
+    <!-- ================= WALL ================= -->
+    <line class="wall-line" x1="40" y1="740" x2="1240" y2="740"/>
+    <rect x="60" y="728" width="340" height="24" fill="#FBFAF7"/>
+    <text class="wall-label" x="72" y="745">Test wall — crossed only below</text>
+
+    <!-- ================= TEST ZONE ================= -->
+    <rect class="testzone" x="40" y="758" width="1200" height="150" rx="20"/>
+
+    <!-- Report -->
+    <rect class="box" x="90" y="782" width="300" height="104" rx="14"/>
+    <text class="role-tag" x="112" y="814">Output</text>
+    <text class="role-name" x="112" y="844" style="font-size:21px">Honest report</text>
+    <text class="role-desc" x="112" y="868">validation headline + bounded test read</text>
+
+    <!-- Final eval -->
+    <rect class="box test" x="480" y="782" width="300" height="104" rx="14"/>
+    <text class="role-tag a" x="502" y="814">Once · Final eval</text>
+    <text class="role-name" x="502" y="844" style="font-size:21px">Final evaluation</text>
+    <text class="role-desc" x="502" y="868">the one test read · bootstrap CI</text>
+
+    <!-- Test set -->
+    <rect class="box test" x="990" y="782" width="230" height="104" rx="14"/>
+    <text class="role-tag a" x="1012" y="814">Held out</text>
+    <text class="role-name" x="1012" y="844" style="font-size:21px">Test set</text>
+    <text class="role-desc" x="1012" y="868">reached only from here</text>
+
+    <!-- ================= ARROWS ================= -->
+    <!-- prior -> proposer -->
+    <path class="edge" d="M160 106 L160 196" marker-end="url(#ar-slate)"/>
+    <!-- human idea -> proposer -->
+    <path class="edge dash" d="M420 106 C 420 150, 300 160, 260 196" marker-end="url(#ar-slate)"/>
+    <text class="flow-label" x="452" y="140">idea · no privilege</text>
+
+    <!-- proposer -> executor -->
+    <path class="edge v" d="M390 265 L476 265" marker-end="url(#ar-teal)"/>
+    <text class="flow-label v" x="405" y="257">design</text>
+
+    <!-- executor -> arbiter -->
+    <path class="edge v" d="M630 330 L630 426" marker-end="url(#ar-teal)"/>
+    <text class="flow-label v" x="642" y="385">ScoreResult</text>
+    <text class="flow-label v" x="642" y="402">val mean ± CI</text>
+
+    <!-- auditor -> arbiter (verdict only) -->
+    <path class="edge" d="M990 340 C 880 380, 820 430, 784 470" marker-end="url(#ar-slate)"/>
+    <text class="flow-label" x="812" y="418">verdict only</text>
+    <text class="flow-label" x="812" y="435">(no labels)</text>
+
+    <!-- arbiter -> proposer : loop back -->
+    <path class="edge loop" d="M480 505 C 120 505, 70 505, 70 300 C 70 265, 80 265, 86 265" marker-end="url(#ar-teal)"/>
+    <text class="flow-label v" x="150" y="487">reason → redesign · next iteration</text>
+
+    <!-- arbiter -> lock -->
+    <path class="edge" d="M630 560 L630 636" marker-end="url(#ar-slate)"/>
+    <text class="flow-label" x="642" y="605">plateau / promote</text>
+
+    <!-- lock -> final eval : THE crossing -->
+    <path class="edge t" d="M630 698 L630 778" marker-end="url(#ar-amber)"/>
+    <text class="flow-label t" x="642" y="726">one test read</text>
+
+    <!-- human trigger -> final eval : routed down the corridor left of the auditor,
+         then across to final eval, so it never crosses the auditor box -->
+    <path class="edge dash" d="M1035 106 C 985 140, 962 172, 962 210 L 962 700 C 962 748, 800 762, 730 780" marker-end="url(#ar-slate)"/>
+    <text class="flow-label" x="905" y="660">command: test</text>
+
+    <!-- auditor -> test set : dashed, molecules only, crosses wall -->
+    <path class="edge t dash" d="M1105 380 L1105 778" marker-end="url(#ar-amber)"/>
+    <text class="flow-label t" x="1118" y="560">molecules</text>
+    <text class="flow-label t" x="1118" y="577">only</text>
+
+    <!-- final eval <-> test set -->
+    <path class="edge t" d="M780 834 L986 834" marker-end="url(#ar-amber)"/>
+    <text class="flow-label t" x="820" y="824">score once</text>
+
+    <!-- final eval -> report -->
+    <path class="edge" d="M480 834 L394 834" marker-end="url(#ar-slate)"/>
+    <text class="flow-label" x="398" y="824">bootstrap CI</text>
+  </svg>
+
+  <div class="legend">
+    <span><span class="sw v"></span> validation flow — the agent works here</span>
+    <span><span class="sw t"></span> test boundary — auditor + final eval only</span>
+    <span><span class="sw d"></span> human, held to the same discipline</span>
+  </div>
+</body>
+</html>

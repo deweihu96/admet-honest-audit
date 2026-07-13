@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Honest AI — ADMET</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#FBFCFD;
+    --paper-2:#F1F4F7;
+    --ink:#1A2332;
+    --slate:#5A6B7B;
+    --line:#D9E0E6;
+    --teal:#0E7C86;
+    --teal-soft:#0E7C8618;
+    --amber:#C77D3A;
+    --amber-soft:#C77D3A1a;
+    --shadow:0 1px 2px #1a233208, 0 8px 30px #1a233210;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html,body{height:100%}
+  body{
+    background:var(--paper);
+    color:var(--ink);
+    font-family:"Inter",system-ui,sans-serif;
+    -webkit-font-smoothing:antialiased;
+    overflow:hidden;
+  }
+  .deck{width:100vw;height:100vh;position:relative}
+  .slide{
+    position:absolute;inset:0;
+    display:none;
+    flex-direction:column;
+    padding:6vh 8vw;
+    opacity:0;
+    transition:opacity .35s ease;
+  }
+  .slide.active{display:flex;opacity:1}
+
+  /* structural device: the CI bar motif */
+  .eyebrow{
+    font-family:"JetBrains Mono",monospace;
+    font-size:.72rem;letter-spacing:.18em;text-transform:uppercase;
+    color:var(--teal);
+    display:flex;align-items:center;gap:.7rem;
+    margin-bottom:1.8rem;
+  }
+  .eyebrow::before{
+    content:"";display:inline-block;width:46px;height:0;
+    border-top:2px solid var(--teal);position:relative;
+  }
+  .eyebrow .dot{width:7px;height:7px;border-radius:50%;background:var(--teal);
+    box-shadow:0 0 0 4px var(--teal-soft);margin-left:-.4rem}
+
+  h1{font-family:"Fraunces",serif;font-weight:500;line-height:1.04;letter-spacing:-.01em}
+  h2{font-family:"Fraunces",serif;font-weight:500;line-height:1.08;letter-spacing:-.01em}
+  .display{font-size:clamp(2.4rem,5.4vw,4.4rem)}
+  .title-lead{font-size:clamp(2rem,4.4vw,3.4rem)}
+  .lede{font-size:clamp(1.05rem,1.7vw,1.45rem);color:var(--slate);line-height:1.5;font-weight:400;max-width:60ch}
+  .body{font-size:clamp(1rem,1.5vw,1.25rem);line-height:1.55;max-width:62ch}
+  strong{font-weight:600;color:var(--ink)}
+  .teal{color:var(--teal)}
+  .amber{color:var(--amber)}
+  mark{background:var(--teal-soft);color:var(--ink);padding:.05em .3em;border-radius:3px}
+  mark.flag{background:var(--amber-soft)}
+
+  .mono{font-family:"JetBrains Mono",monospace}
+  .spacer{flex:1}
+
+  /* footer */
+  .foot{
+    position:absolute;left:8vw;right:8vw;bottom:3.2vh;
+    display:flex;justify-content:space-between;align-items:center;
+    font-family:"JetBrains Mono",monospace;font-size:.7rem;letter-spacing:.08em;
+    color:var(--slate);border-top:1px solid var(--line);padding-top:.9rem;
+  }
+  .foot .proj{color:var(--ink);font-weight:500}
+
+  /* figure placeholder */
+  .figph{
+    border:1.5px dashed var(--line);border-radius:10px;
+    background:
+      repeating-linear-gradient(135deg,transparent,transparent 11px,#1a23320a 11px,#1a23320a 12px),
+      var(--paper-2);
+    display:flex;align-items:center;justify-content:center;flex-direction:column;gap:.5rem;
+    color:var(--slate);text-align:center;
+  }
+  .figph .tag{font-family:"JetBrains Mono",monospace;font-size:.72rem;letter-spacing:.12em;
+    text-transform:uppercase;color:var(--teal)}
+  .figph .cap{font-size:.9rem;max-width:36ch;line-height:1.4}
+
+  /* two-column layouts */
+  .cols{display:grid;grid-template-columns:1.05fr 1fr;gap:4vw;align-items:center;flex:1}
+  .cols.rev{grid-template-columns:1fr 1.05fr}
+  .stack{display:flex;flex-direction:column;justify-content:center;gap:1.4rem}
+
+  /* overview 3-box */
+  .triad{display:grid;grid-template-columns:1fr 1fr;gap:1.1rem;margin-top:.4rem}
+  .card{
+    border:1px solid var(--line);border-radius:12px;background:#fff;
+    padding:1.3rem 1.4rem;box-shadow:var(--shadow);
+  }
+  .card .k{font-family:"JetBrains Mono",monospace;font-size:.7rem;letter-spacing:.14em;
+    text-transform:uppercase;color:var(--teal);margin-bottom:.5rem}
+  .card.audit .k{color:var(--amber)}
+  .card h3{font-family:"Fraunces",serif;font-weight:500;font-size:1.3rem;margin-bottom:.35rem}
+  .card p{font-size:.95rem;color:var(--slate);line-height:1.45}
+  .card.wide{grid-column:1 / -1;background:var(--paper-2);box-shadow:none}
+  .card.wide p{color:var(--ink)}
+
+  /* big number */
+  .bignum{display:flex;align-items:baseline;gap:1.4rem;font-family:"JetBrains Mono",monospace}
+  .bignum .from{font-size:clamp(3rem,8vw,6rem);color:var(--slate);font-weight:500;position:relative}
+  .bignum .from::after{content:"";position:absolute;left:-6%;right:-6%;top:52%;height:3px;background:var(--amber);transform:rotate(-8deg)}
+  .bignum .arrow{font-size:clamp(1.6rem,3vw,2.4rem);color:var(--slate)}
+  .bignum .to{font-size:clamp(3.4rem,9vw,7rem);color:var(--teal);font-weight:700}
+  .numcap{font-size:.95rem;color:var(--slate);margin-top:.4rem}
+
+  /* CI cluster reveal (slide 5 signature) */
+  .cirows{display:flex;flex-direction:column;gap:.55rem;width:100%}
+  .cirow{display:grid;grid-template-columns:64px 1fr;align-items:center;gap:.9rem;font-family:"JetBrains Mono",monospace;font-size:.72rem;color:var(--slate)}
+  .track{position:relative;height:20px}
+  .band{position:absolute;top:50%;transform:translateY(-50%);height:10px;border-radius:5px;background:var(--teal-soft);border:1px solid var(--teal)}
+  .pt{position:absolute;top:50%;transform:translate(-50%,-50%);width:8px;height:8px;border-radius:50%;background:var(--teal)}
+  .ourband{background:var(--amber-soft);border-color:var(--amber)}
+  .ourpt{background:var(--amber)}
+
+  /* nav */
+  .nav{position:absolute;bottom:3vh;right:3vw;display:flex;gap:.4rem;z-index:10}
+  .nav button{border:1px solid var(--line);background:#fff;color:var(--slate);
+    width:34px;height:34px;border-radius:8px;cursor:pointer;font-size:1rem;
+    display:flex;align-items:center;justify-content:center;transition:.15s}
+  .nav button:hover{border-color:var(--teal);color:var(--teal)}
+  .counter{position:absolute;bottom:3vh;left:3vw;font-family:"JetBrains Mono",monospace;
+    font-size:.72rem;color:var(--slate);z-index:10}
+  .counter b{color:var(--ink)}
+  .progress{position:absolute;top:0;left:0;height:3px;background:var(--teal);transition:width .35s ease;z-index:20}
+
+  .kicker{font-family:"JetBrains Mono",monospace;font-size:.8rem;color:var(--amber);
+    letter-spacing:.06em;margin-top:1.2rem}
+  .talk{font-family:"JetBrains Mono",monospace;font-size:.68rem;color:#9aa7b2;
+    letter-spacing:.04em;margin-top:auto;padding-top:1rem;max-width:70ch;line-height:1.5}
+  .talk::before{content:"▸ voiceover  ";color:var(--teal)}
+</style>
+</head>
+<body>
+<div class="deck" id="deck">
+
+  <!-- SLIDE 1 : TITLE -->
+  <section class="slide active">
+    <div class="eyebrow"><span class="dot"></span>Researcher Track · Built with Claude</div>
+    <div class="spacer" style="max-height:6vh"></div>
+    <h1 class="display">Honest AI on the<br>ADMET leaderboard</h1>
+    <p class="lede" style="margin-top:1.6rem">An AI agent that improves drug-property prediction models <mark>honestly</mark>, and audits the benchmark's integrity while it does.</p>
+    <div class="spacer"></div>
+    <div class="body mono" style="font-size:.9rem;color:var(--slate)">Dewei Hu · [affiliation]</div>
+    <div class="talk">Title on screen. Say the one-liner: an AI agent that improves drug-property models honestly, and audits the benchmark while doing it. (Optional: face on camera here only.)</div>
+  </section>
+
+  <!-- SLIDE 2 : PROBLEM -->
+  <section class="slide">
+    <div class="eyebrow"><span class="dot"></span>The problem</div>
+    <div class="cols">
+      <div class="stack">
+        <h2 class="title-lead">Leaderboards look precise.<br>Often they aren't.</h2>
+        <p class="body">TDC ADMET is a standard leaderboard ranking ML models on drug properties — solubility, toxicity, permeability.</p>
+        <p class="body">A 2026 audit found most top entries fail reproducibility or leak test data — and that <strong>overfitting the open test set is a reliable way to climb.</strong></p>
+        <p class="kicker">So a high rank may reflect overfitting, not a better model.</p>
+      </div>
+      <div class="figph" style="height:52vh">
+        <span class="tag">figure · placeholder</span>
+        <span class="cap">Leaderboard screenshot: models ranked 1…N with tight-looking error bars. (Opening image of the bookend.)</span>
+      </div>
+    </div>
+    <div class="talk">Say what TDC ADMET is in one sentence. Then the audit finding: most top entries fail reproducibility or leak, and overfitting the test set climbs the board. Land: a high rank may not mean a better model.</div>
+    <div class="foot"><span class="proj">Honest AI · ADMET</span><span>The problem</span></div>
+  </section>
+
+  <!-- SLIDE 3 : WHAT WE BUILT (OVERVIEW) -->
+  <section class="slide">
+    <div class="eyebrow"><span class="dot"></span>What we built</div>
+    <h2 class="title-lead" style="margin-bottom:1.4rem">One agentic loop that climbs <span class="teal">and</span> audits.</h2>
+    <div class="triad">
+      <div class="card">
+        <div class="k">Climb</div>
+        <h3>Improve models</h3>
+        <p>An agent proposes model designs, trains them, and selects among them to improve validation performance.</p>
+      </div>
+      <div class="card audit">
+        <div class="k">Audit</div>
+        <h3>Check integrity</h3>
+        <p>The same loop checks every model and data split for leakage, and reports results with honest uncertainty.</p>
+      </div>
+      <div class="card wide">
+        <div class="k teal">The structural guarantee</div>
+        <p>The part of the system that can see the <strong>test set</strong> cannot influence the part that <strong>designs models</strong> — so it can't cheat, by construction. Built as an autonomous research agent with <strong>Claude Code</strong>.</p>
+      </div>
+    </div>
+    <div class="talk">The overview. Two things at once: climb (improve models) and audit (check leakage, report honest uncertainty). ONE architecture sentence only: the test-seeing part can't influence the model-designing part. Built with Claude Code. Do NOT explain all four roles.</div>
+    <div class="foot"><span class="proj">Honest AI · ADMET</span><span>Overview</span></div>
+  </section>
+
+  <!-- SLIDE 4 : FINDING 1 -->
+  <section class="slide">
+    <div class="eyebrow"><span class="dot"></span>Finding 1 · Signal is early or absent</div>
+    <div class="cols rev">
+      <div class="figph" style="height:56vh">
+        <span class="tag">figure · Plot B</span>
+        <span class="cap">"Signal appears early": MAE drops sharply at iteration 2, then flat. Star marks first CI-separable promotion.</span>
+      </div>
+      <div class="stack">
+        <h2 class="title-lead">Where there's signal,<br>it shows up at once.</h2>
+        <p class="body">Across 10 endpoints, models measurably separated in only <strong>3</strong> — always the same physically sensible move. Elsewhere they were statistically indistinguishable, and the agent <strong>said so</strong> instead of inventing a winner.</p>
+        <p class="kicker">Real signal appears immediately; iterating doesn't summon it.</p>
+      </div>
+    </div>
+    <div class="talk">Show Plot B. Narrate: separations happened in only 3 of 10 endpoints, always the same descriptor move, appearing at iteration 2. Everywhere else, honest ties. Signal is early or not at all.</div>
+    <div class="foot"><span class="proj">Honest AI · ADMET</span><span>Finding 1 / 2</span></div>
+  </section>
+
+  <!-- SLIDE 5 : FINDING 2 (SIGNATURE) -->
+  <section class="slide">
+    <div class="eyebrow"><span class="dot"></span>Finding 2 · The headline</div>
+    <div class="cols">
+      <div class="stack">
+        <h2 class="title-lead">On small endpoints, the<br>leaderboard ranks <span class="amber">noise</span>.</h2>
+        <p class="body">The honest error bar on small endpoints is wide enough to cover the top ~15 models. The fine-grained ranking there isn't supported by the data.</p>
+        <p class="kicker amber">The top of the board is one statistical cluster wearing a ranking.</p>
+      </div>
+      <div class="stack" style="gap:1rem">
+        <div class="cirows">
+          <div class="cirow"><span>rank 1</span><div class="track"><div class="band" style="left:8%;right:40%"></div><div class="pt" style="left:30%"></div></div></div>
+          <div class="cirow"><span>rank 2</span><div class="track"><div class="band" style="left:14%;right:34%"></div><div class="pt" style="left:38%"></div></div></div>
+          <div class="cirow"><span>rank 5</span><div class="track"><div class="band" style="left:20%;right:26%"></div><div class="pt" style="left:47%"></div></div></div>
+          <div class="cirow"><span>rank 9</span><div class="track"><div class="band" style="left:12%;right:30%"></div><div class="pt" style="left:44%"></div></div></div>
+          <div class="cirow"><span class="amber">ours</span><div class="track"><div class="band ourband" style="left:10%;right:28%"></div><div class="pt ourpt" style="left:40%"></div></div></div>
+        </div>
+        <p class="numcap mono">overlapping CIs → indistinguishable ranks. schematic; replace with real per-endpoint bootstrap CIs.</p>
+      </div>
+    </div>
+    <div class="talk">THE headline. Show the CI cluster: many "ranks" whose confidence intervals all overlap. Say: on small endpoints the honest error bar covers the top ~15 models — the ranking is noise. "One statistical cluster wearing a ranking."</div>
+    <div class="foot"><span class="proj">Honest AI · ADMET</span><span>Finding 2 / 2</span></div>
+  </section>
+
+  <!-- SLIDE 6 : DISCIPLINE — SELF CATCH -->
+  <section class="slide">
+    <div class="eyebrow"><span class="dot"></span>The discipline · caught in the act</div>
+    <div class="cols">
+      <div class="stack">
+        <h2 class="title-lead">It caught its own<br>inflated result.</h2>
+        <p class="body">Our agent's own model posted a test score of <strong>0.70</strong> — competitive with rank one. Then it caught itself: that was a lucky test-set draw. The honest value was <strong class="teal">0.59</strong>. It reported the lower number and flagged the gap.</p>
+        <p class="kicker">The exact move that inflates leaderboards — caught on its own output.</p>
+      </div>
+      <div class="stack" style="align-items:flex-start">
+        <div class="bignum">
+          <span class="from">0.70</span>
+          <span class="arrow">→</span>
+          <span class="to">0.59</span>
+        </div>
+        <p class="numcap">apparent test score → honest generalization estimate</p>
+      </div>
+    </div>
+    <div class="talk">The memorable moment. 0.70 looked competitive with rank one. The agent diagnosed it as a favorable test-set draw, honest value ~0.59, and reported the lower number. The thing that sinks leaderboards, caught on its own output.</div>
+    <div class="foot"><span class="proj">Honest AI · ADMET</span><span>Discipline 1 / 2</span></div>
+  </section>
+
+  <!-- SLIDE 7 : DISCIPLINE — STRESS TEST -->
+  <section class="slide">
+    <div class="eyebrow"><span class="dot"></span>The discipline · stress-tested</div>
+    <div class="cols rev">
+      <div class="figph" style="height:56vh">
+        <span class="tag">figure · Plot A</span>
+        <span class="cap">"Plateau holds under forced iteration": 15 iterations, means wobble, 95% CI bands all overlap the pre-plateau best. "post-plateau gain: NONE."</span>
+      </div>
+      <div class="stack">
+        <h2 class="title-lead">We tried to break it.<br>It held.</h2>
+        <p class="body">"You only tried a few models." So we forced <strong>15</strong> distinct, legitimate models past the plateau. None separated. When the luckiest looked slightly better on average, the confidence-interval rule <strong>refused to credit it</strong>.</p>
+        <p class="kicker">More search didn't manufacture a win — the discipline wouldn't let it.</p>
+      </div>
+    </div>
+    <div class="talk">Show Plot A. Narrate: the obvious challenge is "too few models." We forced 15 legitimate models past the plateau; none separated; the best-mean one was correctly rejected as noise by the CI rule. More search didn't manufacture a win.</div>
+    <div class="foot"><span class="proj">Honest AI · ADMET</span><span>Discipline 2 / 2</span></div>
+  </section>
+
+  <!-- SLIDE 8 : MEANING + VISION -->
+  <section class="slide">
+    <div class="eyebrow"><span class="dot"></span>What it means</div>
+    <div class="stack" style="flex:1;justify-content:center;max-width:70ch">
+      <h2 class="display" style="font-size:clamp(2rem,4vw,3.2rem)">Not a better model —<br>a way to model <span class="teal">without fooling yourself.</span></h2>
+      <p class="body" style="margin-top:1rem">An AI agent can do the iterative modeling work without the test-set overfitting that compromises the benchmark, and audit the benchmark's integrity as it goes.</p>
+      <p class="body"><strong>The vision:</strong> the same pipeline, run as new models are submitted, is a standing integrity check on a leaderboard — not another entry gaming it. It packages as a reusable Claude Code tool.</p>
+    </div>
+    <div class="talk">The thesis: not a better model, a demonstration that an agent can model without the overfitting, and audit integrity as it goes. Vision: a standing leaderboard auditor / reusable Claude Code tool.</div>
+    <div class="foot"><span class="proj">Honest AI · ADMET</span><span>What it means</span></div>
+  </section>
+
+  <!-- SLIDE 9 : REPRO + CLOSE -->
+  <section class="slide">
+    <div class="eyebrow"><span class="dot"></span>Reproducible · Close</div>
+    <div class="cols">
+      <div class="stack">
+        <h2 class="title-lead">Everything reproduces<br>from a fresh clone.</h2>
+        <p class="body">The pipeline, the 10-endpoint findings, and the data — clone, install, run, on a standard laptop. Verified on macOS.</p>
+        <p class="mono" style="font-size:.95rem;color:var(--teal);margin-top:.6rem">github.com/deweihu96/admet-honest-audit</p>
+      </div>
+      <div class="figph" style="height:50vh">
+        <span class="tag">figure · bookend</span>
+        <span class="cap">Same leaderboard from slide 2, now with wide CI bars overlaid — the top ranks revealed as one cluster. Closes the loop.</span>
+      </div>
+    </div>
+    <div class="talk">Close. One line: everything reproduces from a fresh clone, verified on a laptop. Repo on screen. Optional: return to the leaderboard image, now showing the statistical tie — bookend.</div>
+    <div class="foot"><span class="proj">Honest AI · ADMET</span><span>github.com/deweihu96/admet-honest-audit</span></div>
+  </section>
+
+</div>
+
+<div class="progress" id="progress"></div>
+<div class="counter"><b id="cur">1</b> / <span id="total">9</span></div>
+<div class="nav"><button id="prev">‹</button><button id="next">›</button></div>
+
+<script>
+  const slides=[...document.querySelectorAll('.slide')];
+  let i=0;const total=slides.length;
+  document.getElementById('total').textContent=total;
+  const prog=document.getElementById('progress');
+  function show(n){
+    i=Math.max(0,Math.min(total-1,n));
+    slides.forEach((s,k)=>s.classList.toggle('active',k===i));
+    document.getElementById('cur').textContent=i+1;
+    prog.style.width=((i+1)/total*100)+'%';
+  }
+  document.getElementById('next').onclick=()=>show(i+1);
+  document.getElementById('prev').onclick=()=>show(i-1);
+  document.addEventListener('keydown',e=>{
+    if(e.key==='ArrowRight'||e.key===' '||e.key==='PageDown'){e.preventDefault();show(i+1)}
+    if(e.key==='ArrowLeft'||e.key==='PageUp'){e.preventDefault();show(i-1)}
+    if(e.key==='Home')show(0); if(e.key==='End')show(total-1);
+  });
+  show(0);
+</script>
+</body>
+</html>

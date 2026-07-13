@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Architecture — Honest AI ADMET</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#FBFAF7;      /* warm soft-editorial paper */
+    --paper-2:#F3EFE8;
+    --ink:#2A2620;
+    --slate:#6B6459;
+    --line:#E0D9CD;
+    --teal:#0E7C86;       /* verified / clean */
+    --teal-soft:#0E7C8615;
+    --amber:#C0733A;      /* flagged / test-boundary */
+    --amber-soft:#C0733A18;
+    --shadow:0 1px 2px #2a262008, 0 10px 34px #2a262012;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{
+    background:var(--paper);color:var(--ink);
+    font-family:"Inter",system-ui,sans-serif;-webkit-font-smoothing:antialiased;
+    min-height:100vh;display:flex;align-items:center;justify-content:center;padding:5vh 4vw;
+  }
+  .frame{width:min(1180px,96vw)}
+  .eyebrow{
+    font-family:"JetBrains Mono",monospace;font-size:.8rem;letter-spacing:.2em;
+    text-transform:uppercase;color:var(--teal);display:flex;align-items:center;gap:.8rem;margin-bottom:1rem;
+  }
+  .eyebrow::before{content:"";width:52px;border-top:2px solid var(--teal)}
+  h1{font-family:"Fraunces",serif;font-weight:500;font-size:clamp(2rem,3.6vw,3rem);
+     line-height:1.05;letter-spacing:-.01em;margin-bottom:.5rem}
+  .sub{color:var(--slate);font-size:clamp(1rem,1.5vw,1.25rem);max-width:64ch;line-height:1.5;margin-bottom:2.4rem}
+
+  .diagram{
+    position:relative;
+    display:grid;
+    grid-template-columns:1.15fr 1.15fr 1fr;
+    gap:1.1rem;
+    align-items:stretch;
+  }
+
+  .role{
+    background:#fff;border:1px solid var(--line);border-radius:16px;
+    padding:1.5rem 1.5rem;box-shadow:var(--shadow);position:relative;
+    display:flex;flex-direction:column;gap:.5rem;
+  }
+  .role .tag{
+    font-family:"JetBrains Mono",monospace;font-size:.72rem;letter-spacing:.14em;
+    text-transform:uppercase;color:var(--teal);display:flex;align-items:center;gap:.5rem;
+  }
+  .role h3{font-family:"Fraunces",serif;font-weight:500;font-size:1.55rem;line-height:1.1}
+  .role p{color:var(--slate);font-size:1rem;line-height:1.45}
+  .role .kind{
+    margin-top:.3rem;font-family:"JetBrains Mono",monospace;font-size:.68rem;
+    letter-spacing:.08em;color:var(--slate);text-transform:uppercase;
+    border-top:1px dashed var(--line);padding-top:.6rem;
+  }
+
+  /* the loop container spanning proposer+executor+arbiter */
+  .loop{
+    grid-column:1 / 3;
+    border:1.5px dashed var(--teal);border-radius:20px;
+    background:var(--teal-soft);
+    padding:2.6rem 1.3rem 1.3rem;position:relative;
+    display:grid;grid-template-columns:1fr 1fr;gap:1.1rem;
+  }
+  .loop-label{
+    position:absolute;top:-.9rem;left:1.4rem;background:var(--paper);
+    padding:0 .7rem;font-family:"JetBrains Mono",monospace;font-size:.72rem;
+    letter-spacing:.14em;text-transform:uppercase;color:var(--teal);
+  }
+  .loop .role.span2{grid-column:1 / -1}
+
+  /* auditor column */
+  .auditside{grid-column:3 / 4;display:flex;flex-direction:column;gap:1.1rem}
+  .role.audit .tag{color:var(--amber)}
+  .role.audit{border-color:#E7D3C0}
+
+  /* the wall */
+  .wall{
+    grid-column:1 / -1;margin-top:.4rem;
+    background:var(--amber-soft);border:1.5px solid #E7D3C0;border-radius:16px;
+    padding:1.3rem 1.6rem;display:flex;align-items:center;gap:1.2rem;
+  }
+  .wall .lock{
+    font-family:"JetBrains Mono",monospace;font-size:.72rem;letter-spacing:.14em;
+    text-transform:uppercase;color:var(--amber);white-space:nowrap;
+    border-right:1px solid #E7D3C0;padding-right:1.2rem;
+  }
+  .wall p{font-size:1.05rem;line-height:1.45;color:var(--ink)}
+  .wall strong{color:var(--amber)}
+
+  /* flow chips */
+  .flow{
+    display:flex;flex-wrap:wrap;gap:.55rem;margin-top:1.8rem;align-items:center;
+    font-family:"JetBrains Mono",monospace;font-size:.82rem;color:var(--slate);
+  }
+  /* each step glues its chip to its trailing arrow so the arrow can never wrap
+     to the start of a line (which read as a stray arrow pointing at nothing). */
+  .step{display:inline-flex;align-items:center;gap:.55rem;white-space:nowrap}
+  .chip{background:#fff;border:1px solid var(--line);border-radius:999px;padding:.35rem .8rem;color:var(--ink)}
+  .chip.v{border-color:var(--teal);color:var(--teal)}
+  .chip.t{border-color:var(--amber);color:var(--amber)}
+  .arr{color:var(--slate)}
+
+  .legend{display:flex;gap:1.6rem;margin-top:1.4rem;flex-wrap:wrap;
+    font-family:"JetBrains Mono",monospace;font-size:.72rem;color:var(--slate)}
+  .legend span{display:flex;align-items:center;gap:.45rem}
+  .sw{width:14px;height:14px;border-radius:4px}
+  .sw.teal{background:var(--teal-soft);border:1.5px solid var(--teal)}
+  .sw.amber{background:var(--amber-soft);border:1.5px solid #E7D3C0}
+  .sw.human{background:#fff;border:1.5px solid var(--slate)}
+
+  .role.human{border-style:solid;border-color:var(--slate)}
+  .role.human .tag{color:var(--slate)}
+</style>
+</head>
+<body>
+<div class="frame">
+  <div class="eyebrow">Architecture</div>
+  <h1>One loop that climbs — with the test set walled off.</h1>
+  <p class="sub">Four roles, separated so the component that can see the test set cannot influence the component that designs models. Honesty is enforced by what each module can import, not by good intentions.</p>
+
+  <div class="diagram">
+
+    <!-- the validation-only loop -->
+    <div class="loop">
+      <span class="loop-label">Iteration loop · validation only</span>
+
+      <div class="role">
+        <div class="tag">● Agent · Proposer</div>
+        <h3>Proposer</h3>
+        <p>Reasons about validation results and designs the next model version.</p>
+        <div class="kind">Claude Code · sees validation only</div>
+      </div>
+
+      <div class="role">
+        <div class="tag">● Agent · Executor</div>
+        <h3>Executor</h3>
+        <p>Trains each candidate and scores it on validation across seeds.</p>
+        <div class="kind">no test path, by construction</div>
+      </div>
+
+      <div class="role span2">
+        <div class="tag">▤ Deterministic · Arbiter</div>
+        <h3>Arbiter</h3>
+        <p>Promotes a model only on non-overlapping confidence intervals, keeps the simpler model on ties, and detects plateaus. Pure code — it can't be argued into a bad promotion.</p>
+        <div class="kind">no LLM · fully logged</div>
+      </div>
+    </div>
+
+    <!-- auditor lives outside the loop, touches test, returns only a verdict -->
+    <div class="auditside">
+      <div class="role audit" style="flex:1">
+        <div class="tag">◆ Walled · Auditor</div>
+        <h3>Auditor</h3>
+        <p>The only component allowed to touch test-set <em>molecules</em> — for leakage checks. Returns a summary verdict with <strong>no labels, no per-molecule data</strong>.</p>
+        <div class="kind">two-axis: Tanimoto + InChIKey</div>
+      </div>
+      <div class="role human">
+        <div class="tag">◈ Human-in-the-loop</div>
+        <h3>You</h3>
+        <p>Inject an idea the agent didn't reach; command when to test. Held to the same discipline — repeated tests widen the reported uncertainty.</p>
+        <div class="kind">no privilege · test reads counted</div>
+      </div>
+    </div>
+
+    <!-- the wall -->
+    <div class="wall">
+      <span class="lock">Test wall</span>
+      <p>The test set is reached only by the <strong>auditor</strong> (molecules, never labels) and by a single <strong>final evaluation</strong>, run once after a model is locked. The iteration loop has <strong>no code path</strong> to it.</p>
+    </div>
+  </div>
+
+  <!-- honest data-flow line -->
+  <div class="flow">
+    <span class="step"><span class="chip">candidate</span><span class="arr">→</span></span>
+    <span class="step"><span class="chip v">train</span><span class="arr">→</span></span>
+    <span class="step"><span class="chip v">score on validation</span><span class="arr">→</span></span>
+    <span class="step"><span class="chip">arbiter: promote / tie</span><span class="arr">→</span></span>
+    <span class="step"><span class="chip">lock</span><span class="arr">→</span></span>
+    <span class="step"><span class="chip t">test · once</span><span class="arr">→</span></span>
+    <span class="step"><span class="chip t">bootstrap CI + verdict</span></span>
+  </div>
+
+  <div class="legend">
+    <span><span class="sw teal"></span> validation loop (agent works here)</span>
+    <span><span class="sw amber"></span> test boundary (auditor + final eval only)</span>
+    <span><span class="sw human"></span> human, same discipline as the agent</span>
+  </div>
+</div>
+</body>
+</html>

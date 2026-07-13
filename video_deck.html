@@ -1,0 +1,483 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Honest AI on the ADMET Leaderboard — 3-min demo</title>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+<!-- Soft Editorial's own type pairing: Cormorant Garamond (display + ornament) + Work Sans (body). -->
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Work+Sans:wght@300;400;500;600&display=swap" rel="stylesheet" />
+
+<style>
+/* ============================================================================
+   SOFT EDITORIAL — adapted faithfully from beautiful-html-templates/soft-editorial
+   Palette, type scale, chrome, card grammar, and the italic-<em> weight-drop
+   signal are the template's. Type sizes are bumped ~25-30% over the template's
+   defaults for on-screen video legibility, holding the same proportions.
+   ============================================================================ */
+:root{
+  --paper:   #F2EEDF;   /* warm cream page — the constant field */
+  --paper-2: #ECE6D2;
+  --ink:     #2A241B;   /* warm near-black */
+  --ink-soft:#5C5345;   /* muted warm grey-brown */
+  --pink:    #E1A4C2;   /* dusty pink */
+  --lemon:   #D6DD63;   /* chartreuse */
+  --blush:   #E8C9B6;   /* soft peach */
+  --sage:    #B7C7A8;   /* sage */
+  --lilac:   #C9BEDC;   /* lilac */
+  --card:    rgba(255,255,255,0.55);   /* translucent white — default card */
+  --rule-soft:  rgba(42,36,27,0.18);
+  --rule-med:   rgba(42,36,27,0.35);
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;background:#1a1a1a}          /* letterbox field */
+body{font-family:"Work Sans","Helvetica Neue",Helvetica,Arial,sans-serif;color:var(--ink)}
+deck-stage{background:#1a1a1a}
+
+/* Each slide is the cream field. */
+section.slide{
+  background:var(--paper);
+  color:var(--ink);
+  overflow:hidden;
+  position:relative;
+}
+
+/* ---- Type primitives (Cormorant carries every headline / ornament) -------- */
+.serif{font-family:"Cormorant Garamond","Garamond",serif;font-weight:500}
+h1,h2,h3,p{margin:0}
+em{font-style:italic;font-weight:400}   /* the system's signal: italic drops weight */
+
+.display{font-family:"Cormorant Garamond",serif;font-weight:500;font-size:150px;line-height:.95;letter-spacing:-.02em}
+.h-title{font-family:"Cormorant Garamond",serif;font-weight:500;font-size:104px;line-height:.98;letter-spacing:-.015em}
+.h-panel{font-family:"Cormorant Garamond",serif;font-weight:500;font-size:96px;line-height:.99;letter-spacing:-.01em}
+.h-sect {font-family:"Cormorant Garamond",serif;font-weight:500;font-size:92px;line-height:.99;letter-spacing:-.01em}
+.body{font-family:"Work Sans",sans-serif;font-weight:400;font-size:34px;line-height:1.5;color:var(--ink)}
+.body.soft{color:var(--ink-soft)}
+/* takeaway line — the draft's "kicker"; here it becomes an italic editorial marker */
+.take{font-family:"Cormorant Garamond",serif;font-style:italic;font-weight:500;font-size:46px;line-height:1.12;color:var(--ink)}
+.take .hl{font-style:italic;color:#B6588A}          /* deepened pink for the quotable phrase */
+.take.sage .hl{color:#5f7a4e}
+
+/* ---- Shared chrome (fixed offsets, per the template) ---------------------- */
+.eyebrow{position:absolute;top:60px;left:80px;font-family:"Work Sans",sans-serif;font-weight:400;
+  font-size:30px;color:var(--ink);letter-spacing:-.005em}
+.pagedot{position:absolute;top:60px;right:80px;font-family:"Cormorant Garamond",serif;font-style:italic;
+  font-weight:400;font-size:30px;color:var(--ink-soft);font-variant-numeric:tabular-nums}
+.footer{position:absolute;left:80px;right:80px;bottom:50px;display:flex;justify-content:space-between;
+  font-family:"Cormorant Garamond",serif;font-style:italic;font-weight:400;font-size:30px;color:var(--ink-soft)}
+
+/* ---- Layout scaffolds ----------------------------------------------------- */
+.content{position:absolute;left:80px;right:80px;top:196px;bottom:150px}
+.split{display:grid;grid-template-columns:1fr 1fr;gap:76px;height:100%;align-items:stretch}
+.split.rev .col-fig{order:-1}
+.col-fig{display:flex;align-items:center;justify-content:center;min-height:0}
+.stack{display:flex;flex-direction:column;gap:30px;justify-content:center}
+/* denser variant for the one slide carrying two body paragraphs + a takeaway */
+.stack.tight{gap:24px}
+.stack.tight .h-panel{font-size:86px}
+.stack.tight .body{font-size:30px}
+.stack.tight .take{font-size:40px}
+
+/* ---- Figure card (in-system placeholder; real <img> falls through) -------- */
+.fig{position:relative;width:100%;height:100%;max-height:100%;border-radius:28px;background:var(--card);
+  overflow:hidden;display:flex;align-items:center;justify-content:center}
+.fig img{width:100%;height:100%;object-fit:contain;display:block;padding:14px}
+.fig-ph{position:absolute;inset:14px;display:none;flex-direction:column;align-items:center;justify-content:center;
+  gap:18px;text-align:center;border:1.5px dashed var(--rule-soft);border-radius:20px;padding:36px}
+.fig-tag{font-family:"Work Sans",sans-serif;font-weight:500;font-size:26px;color:var(--ink)}
+.fig-cap{font-family:"Cormorant Garamond",serif;font-style:italic;font-size:34px;line-height:1.28;
+  color:var(--ink-soft);max-width:30ch}
+.fig-drop{font-family:"Work Sans",sans-serif;font-weight:500;font-size:22px;color:#8a7f6d;
+  border-top:1px dashed var(--rule-soft);padding-top:16px}
+
+/* =============================== 1 · COVER ================================= */
+.s-cover .co{position:absolute;left:80px;right:80px;top:270px;
+  display:flex;flex-direction:column;gap:34px}
+.s-cover .kicker{font-family:"Cormorant Garamond",serif;font-style:italic;font-weight:400;font-size:46px;color:var(--ink-soft)}
+.s-cover h1{max-width:22ch;font-size:132px;line-height:.95}
+.s-cover .lede{font-family:"Work Sans",sans-serif;font-weight:400;font-size:36px;line-height:1.42;
+  max-width:56ch;color:var(--ink-soft)}
+.s-cover .swatches{position:absolute;right:80px;top:80px;display:flex;gap:16px}
+.s-cover .swatches i{width:60px;height:60px;border-radius:50%;display:block}
+
+/* =============================== 3 · OVERVIEW (architecture diagram) ======= */
+.s-diagram .head{position:absolute;left:80px;right:80px;top:118px}
+.s-diagram .head h2{font-size:60px}
+.s-diagram .figwrap{position:absolute;left:80px;right:80px;top:244px;bottom:138px;
+  border-radius:24px;background:var(--card);display:flex;align-items:center;justify-content:center;padding:26px;margin:0}
+.s-diagram .figwrap img{max-width:100%;max-height:100%;object-fit:contain;display:block;border-radius:8px}
+
+/* =========================== 5 · CI CLUSTER (signature) =================== */
+.cluster{display:flex;flex-direction:column;gap:22px;width:100%}
+.cirow{display:grid;grid-template-columns:120px 1fr;align-items:center;gap:26px}
+.cirow .lab{font-family:"Cormorant Garamond",serif;font-style:italic;font-weight:400;font-size:34px;color:var(--ink-soft);text-align:right}
+.track{position:relative;height:34px}
+.band{position:absolute;top:50%;transform:translateY(-50%);height:16px;border-radius:8px;
+  background:rgba(183,199,168,0.55);border:1.5px solid #8ea679}          /* sage translucent */
+.pt{position:absolute;top:50%;transform:translate(-50%,-50%);width:13px;height:13px;border-radius:50%;background:#5f7a4e}
+.cirow.ours .lab{color:#B6588A;font-style:italic}
+.ourband{background:rgba(225,164,194,0.55);border-color:#c874a0}         /* pink translucent */
+.ourpt{background:#B6588A}
+.cluster-cap{font-family:"Cormorant Garamond",serif;font-style:italic;font-size:30px;line-height:1.35;
+  color:var(--ink-soft);margin-top:8px;max-width:44ch}
+
+/* ============================ 6 · BIG NUMBER ============================== */
+.bignum-card{background:var(--card);border-radius:36px;padding:60px 60px 52px;display:flex;flex-direction:column;gap:34px;align-items:flex-start}
+.bignum{display:flex;align-items:baseline;gap:36px;font-family:"Cormorant Garamond",serif;font-weight:500;line-height:.9}
+.bignum .from{font-size:166px;color:var(--ink-soft);position:relative}
+.bignum .from::after{content:"";position:absolute;left:-8%;right:-8%;top:52%;height:8px;border-radius:4px;
+  background:#c874a0;transform:rotate(-9deg)}                             /* pink strike */
+.bignum .arw{font-family:"Cormorant Garamond",serif;font-style:italic;font-size:88px;color:var(--ink-soft)}
+.bignum .to{font-size:208px;color:var(--ink)}
+.bignum .to em{font-style:normal;font-weight:500}
+.numcap{font-family:"Work Sans",sans-serif;font-weight:400;font-size:30px;color:var(--ink-soft)}
+
+/* ============================ 8 · STATEMENT ============================== */
+.s-statement .wrap{position:absolute;left:80px;right:80px;top:200px;bottom:150px;
+  display:flex;flex-direction:column;justify-content:center;gap:34px}
+.s-statement .h-title{max-width:24ch;font-size:94px}
+.s-statement .body{font-size:32px;max-width:64ch}
+.s-statement .body .vlabel{font-family:"Cormorant Garamond",serif;font-style:italic;font-weight:500;color:var(--ink)}
+
+/* ============================ 9 · REPRO / CLOSE ========================== */
+.repo{font-family:"Work Sans",sans-serif;font-weight:500;font-size:36px;color:#5f7a4e;margin-top:8px}
+
+/* ---- Voiceover presenter note: kept per slide, hidden until you press N --- */
+.vo{position:absolute;left:80px;right:80px;bottom:104px;font-family:"Cormorant Garamond",serif;
+  font-style:italic;font-weight:400;font-size:28px;line-height:1.42;color:var(--ink-soft);
+  max-width:104ch;border-top:1px dashed var(--rule-soft);padding-top:14px;opacity:0;transition:opacity .18s ease;
+  pointer-events:none}
+.vo::before{content:"voiceover — ";color:#B6588A;font-style:italic}
+body.show-vo .vo{opacity:1}
+
+/* ---- Gentle entrance for the active slide's content (reduced-motion safe) - */
+@keyframes rise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+[data-deck-active] .content,[data-deck-active] .co,[data-deck-active] .head,
+[data-deck-active] .grid,[data-deck-active] .wrap{animation:rise .5s cubic-bezier(.2,.8,.2,1) both}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+
+<deck-stage width="1920" height="1080">
+
+  <!-- ============================ 1 · TITLE ============================== -->
+  <section class="slide s-cover" data-label="Title">
+    <div class="eyebrow">Researcher track · built with Claude</div>
+    <div class="swatches" aria-hidden="true">
+      <i style="background:var(--pink)"></i>
+      <i style="background:var(--lemon)"></i>
+      <i style="background:var(--sage)"></i>
+    </div>
+    <div class="co">
+      <div class="kicker">An honest climb, audited as it goes</div>
+      <h1 class="display">Honest AI on the <em>ADMET&nbsp;leaderboard.</em></h1>
+      <p class="lede">An AI agent that improves drug-property prediction models <em>honestly</em>, and audits the benchmark's integrity while it does.</p>
+    </div>
+    <div class="footer"><span>Dewei Hu · [affiliation]</span><span>Honest AI · ADMET · 2026</span></div>
+    <div class="vo">Title on screen. Say the one-liner: an AI agent that improves drug-property models honestly, and audits the benchmark while doing it. (Optional: face on camera here only.)</div>
+  </section>
+
+  <!-- ============================ 2 · PROBLEM =========================== -->
+  <section class="slide s-split" data-label="The problem">
+    <div class="eyebrow">The problem</div>
+    <div class="pagedot">02 / 09</div>
+    <div class="content"><div class="split">
+      <div class="stack tight">
+        <h2 class="h-panel">Leaderboards look precise.<br><em>Often they aren't.</em></h2>
+        <p class="body soft">TDC ADMET is a standard leaderboard ranking machine-learning models on drug properties — solubility, toxicity, permeability.</p>
+        <p class="body soft">A 2026 audit found most top entries fail reproducibility or leak test data — and that overfitting the open test set is a reliable way to climb.</p>
+        <p class="take">So a high rank may reflect <span class="hl">overfitting</span>, not a better model.</p>
+      </div>
+      <div class="col-fig">
+        <figure class="fig">
+          <img src="figures/leaderboard.png" alt="Leaderboard screenshot"
+               onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+          <div class="fig-ph">
+            <span class="fig-tag">figure · leaderboard screenshot</span>
+            <span class="fig-cap">Models ranked 1…N with tight-looking error bars — the opening image of the bookend.</span>
+            <span class="fig-drop">drop in → figures/leaderboard.png</span>
+          </div>
+        </figure>
+      </div>
+    </div></div>
+    <div class="footer"><span>Honest AI · ADMET</span><span>The problem</span></div>
+    <div class="vo">Say what TDC ADMET is in one sentence. Then the audit finding: most top entries fail reproducibility or leak, and overfitting the test set climbs the board. Land: a high rank may not mean a better model.</div>
+  </section>
+
+  <!-- ============================ 3 · OVERVIEW (architecture diagram) ==== -->
+  <section class="slide s-diagram" data-label="What we built">
+    <div class="eyebrow">What we built</div>
+    <div class="pagedot">03 / 09</div>
+    <div class="head"><h2 class="h-sect">One agentic loop that climbs <em>and</em> audits — the test set walled off.</h2></div>
+    <figure class="figwrap">
+      <img src="figures/architecture.png" alt="Data-flow architecture: proposer, executor and deterministic arbiter run in a validation-only loop; a walled auditor touches test molecules but returns only a verdict; a single final evaluation crosses the test wall once.">
+    </figure>
+    <div class="footer"><span>Honest AI · ADMET</span><span>Overview</span></div>
+    <div class="vo">Two things at once: climb (improve models) and audit (check leakage, report honest uncertainty). ONE architecture sentence: the part that can see the test set cannot influence the part that designs models — the diagram shows the wall. Built with Claude Code. Don't read every box; point at the loop and the wall.</div>
+  </section>
+
+  <!-- ============================ 4 · FINDING 1 ======================== -->
+  <section class="slide s-split" data-label="Finding 1">
+    <div class="eyebrow">Finding 1 · signal is early or absent</div>
+    <div class="pagedot">04 / 09</div>
+    <div class="content"><div class="split rev">
+      <div class="col-fig">
+        <figure class="fig">
+          <img src="figures/plotB_signal_appears_early.png" alt="Plot B — signal appears early"
+               onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+          <div class="fig-ph">
+            <span class="fig-tag">figure · Plot B</span>
+            <span class="fig-cap">Signal appears early: MAE drops sharply at iteration 2, then flat. Star marks the first CI-separable promotion.</span>
+            <span class="fig-drop">drop in → figures/plotB_signal_appears_early.png</span>
+          </div>
+        </figure>
+      </div>
+      <div class="stack">
+        <h2 class="h-panel">Where there's signal,<br><em>it shows up at once.</em></h2>
+        <p class="body soft">Across 10 endpoints, models measurably separated in only <em>three</em> — always the same physically sensible move. Elsewhere they were statistically indistinguishable, and the agent said so instead of inventing a winner.</p>
+        <p class="take sage">Real signal appears immediately; <span class="hl">iterating doesn't summon it.</span></p>
+      </div>
+    </div></div>
+    <div class="footer"><span>Honest AI · ADMET</span><span>Finding 1 / 2</span></div>
+    <div class="vo">Show Plot B. Narrate: separations happened in only 3 of 10 endpoints, always the same descriptor move, appearing at iteration 2. Everywhere else, honest ties. Signal is early or not at all.</div>
+  </section>
+
+  <!-- ============================ 5 · FINDING 2 (CI CLUSTER) =========== -->
+  <section class="slide s-split" data-label="Finding 2 · the headline">
+    <div class="eyebrow">Finding 2 · the headline</div>
+    <div class="pagedot">05 / 09</div>
+    <div class="content"><div class="split">
+      <div class="stack">
+        <h2 class="h-panel">On small endpoints, the<br>leaderboard ranks <em>noise.</em></h2>
+        <p class="body soft">The honest error bar on small endpoints is wide enough to cover the top ~15 models. The fine-grained ranking there isn't supported by the data.</p>
+        <p class="take">The top of the board is one <span class="hl">statistical cluster wearing a ranking.</span></p>
+      </div>
+      <div class="stack" style="gap:20px">
+        <div class="cluster">
+          <div class="cirow"><span class="lab">rank i</span><div class="track"><div class="band" style="left:8%;right:40%"></div><div class="pt" style="left:30%"></div></div></div>
+          <div class="cirow"><span class="lab">rank ii</span><div class="track"><div class="band" style="left:14%;right:34%"></div><div class="pt" style="left:38%"></div></div></div>
+          <div class="cirow"><span class="lab">rank v</span><div class="track"><div class="band" style="left:20%;right:26%"></div><div class="pt" style="left:47%"></div></div></div>
+          <div class="cirow"><span class="lab">rank ix</span><div class="track"><div class="band" style="left:12%;right:30%"></div><div class="pt" style="left:44%"></div></div></div>
+          <div class="cirow ours"><span class="lab">ours</span><div class="track"><div class="band ourband" style="left:10%;right:28%"></div><div class="pt ourpt" style="left:40%"></div></div></div>
+        </div>
+        <p class="cluster-cap">Overlapping confidence intervals → indistinguishable ranks. Schematic; replace with real per-endpoint bootstrap CIs.</p>
+      </div>
+    </div></div>
+    <div class="footer"><span>Honest AI · ADMET</span><span>Finding 2 / 2</span></div>
+    <div class="vo">THE headline. Show the CI cluster: many "ranks" whose confidence intervals all overlap. Say: on small endpoints the honest error bar covers the top ~15 models — the ranking is noise. "One statistical cluster wearing a ranking."</div>
+  </section>
+
+  <!-- ============================ 6 · SELF-CATCH (BIG NUMBER) ========== -->
+  <section class="slide s-split" data-label="Discipline · caught in the act">
+    <div class="eyebrow">The discipline · caught in the act</div>
+    <div class="pagedot">06 / 09</div>
+    <div class="content"><div class="split">
+      <div class="stack">
+        <h2 class="h-panel">It caught its own<br><em>inflated result.</em></h2>
+        <p class="body soft">Our agent's own model posted a test score of 0.70 — competitive with rank one. Then it caught itself: that was a lucky test-set draw. The honest value was 0.59. It reported the lower number and flagged the gap.</p>
+        <p class="take">The exact move that inflates leaderboards — <span class="hl">caught on its own output.</span></p>
+      </div>
+      <div class="stack" style="align-items:stretch">
+        <div class="bignum-card">
+          <div class="bignum">
+            <span class="from">0.70</span>
+            <span class="arw">→</span>
+            <span class="to">0.59</span>
+          </div>
+          <p class="numcap">apparent test score → honest generalization estimate</p>
+        </div>
+      </div>
+    </div></div>
+    <div class="footer"><span>Honest AI · ADMET</span><span>Discipline 1 / 2</span></div>
+    <div class="vo">The memorable moment. 0.70 looked competitive with rank one. The agent diagnosed it as a favorable test-set draw, honest value ~0.59, and reported the lower number. The thing that sinks leaderboards, caught on its own output.</div>
+  </section>
+
+  <!-- ============================ 7 · STRESS TEST (PLOT A) ============= -->
+  <section class="slide s-split" data-label="Discipline · stress-tested">
+    <div class="eyebrow">The discipline · stress-tested</div>
+    <div class="pagedot">07 / 09</div>
+    <div class="content"><div class="split rev">
+      <div class="col-fig">
+        <figure class="fig">
+          <img src="figures/plotA_plateau_holds.png" alt="Plot A — plateau holds"
+               onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+          <div class="fig-ph">
+            <span class="fig-tag">figure · Plot A</span>
+            <span class="fig-cap">Plateau holds under forced iteration: 15 attempts, means wobble, 95% CI bands all overlap the pre-plateau best. "Post-plateau gain: none."</span>
+            <span class="fig-drop">drop in → figures/plotA_plateau_holds.png</span>
+          </div>
+        </figure>
+      </div>
+      <div class="stack">
+        <h2 class="h-panel">We tried to break it.<br><em>It held.</em></h2>
+        <p class="body soft">"You only tried a few models." So we forced <em>fifteen</em> distinct, legitimate models past the plateau. None separated. When the luckiest looked slightly better on average, the confidence-interval rule refused to credit it.</p>
+        <p class="take sage">More search didn't manufacture a win — <span class="hl">the discipline wouldn't let it.</span></p>
+      </div>
+    </div></div>
+    <div class="footer"><span>Honest AI · ADMET</span><span>Discipline 2 / 2</span></div>
+    <div class="vo">Show Plot A. Narrate: the obvious challenge is "too few models." We forced 15 legitimate models past the plateau; none separated; the best-mean one was correctly rejected as noise by the CI rule. More search didn't manufacture a win.</div>
+  </section>
+
+  <!-- ============================ 8 · MEANING + VISION ================= -->
+  <section class="slide s-statement" data-label="What it means">
+    <div class="eyebrow">What it means</div>
+    <div class="pagedot">08 / 09</div>
+    <div class="wrap">
+      <h2 class="h-title">Not a better model —<br>a way to model <em>without fooling&nbsp;yourself.</em></h2>
+      <p class="body soft">An AI agent can do the iterative modeling work without the test-set overfitting that compromises the benchmark, and audit the benchmark's integrity as it goes.</p>
+      <p class="body soft"><span class="vlabel">The vision —</span> the same pipeline, run as new models are submitted, is a standing integrity check on a leaderboard, not another entry gaming it. It packages as a reusable Claude Code tool.</p>
+    </div>
+    <div class="footer"><span>Honest AI · ADMET</span><span>What it means</span></div>
+    <div class="vo">The thesis: not a better model, a demonstration that an agent can model without the overfitting, and audit integrity as it goes. Vision: a standing leaderboard auditor / reusable Claude Code tool.</div>
+  </section>
+
+  <!-- ============================ 9 · REPRO + CLOSE =================== -->
+  <section class="slide s-split" data-label="Reproducible · close">
+    <div class="eyebrow">Reproducible · close</div>
+    <div class="pagedot">09 / 09</div>
+    <div class="content"><div class="split">
+      <div class="stack">
+        <h2 class="h-panel">Everything reproduces<br><em>from a fresh clone.</em></h2>
+        <p class="body soft">The pipeline, the 10-endpoint findings, and the data — clone, install, run, on a standard laptop. Verified on macOS.</p>
+        <p class="repo">github.com/deweihu96/admet-honest-audit</p>
+      </div>
+      <div class="col-fig">
+        <figure class="fig">
+          <img src="figures/leaderboard_bookend.png" alt="Transformed leaderboard bookend"
+               onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+          <div class="fig-ph">
+            <span class="fig-tag">figure · bookend</span>
+            <span class="fig-cap">The same leaderboard from slide 2, now with wide CI bars overlaid — the top ranks revealed as one cluster. Closes the loop.</span>
+            <span class="fig-drop">drop in → figures/leaderboard_bookend.png</span>
+          </div>
+        </figure>
+      </div>
+    </div></div>
+    <div class="footer"><span>Honest AI · ADMET</span><span>github.com/deweihu96/admet-honest-audit</span></div>
+    <div class="vo">Close. One line: everything reproduces from a fresh clone, verified on a laptop. Repo on screen. Optional: return to the leaderboard image, now showing the statistical tie — bookend.</div>
+  </section>
+
+</deck-stage>
+
+<!-- ============================================================================
+     deck-stage.js — the Soft Editorial runtime, inlined verbatim so this file is
+     fully self-contained. Provides the fixed 1920x1080 scaled stage, keyboard nav
+     (arrows / space / PgUp-PgDn / Home-End / number keys / R), and the slide-count
+     overlay. See beautiful-html-templates/templates/soft-editorial/deck-stage.js
+     ============================================================================ -->
+<script>
+(() => {
+  const DESIGN_W_DEFAULT = 1920, DESIGN_H_DEFAULT = 1080, OVERLAY_HIDE_MS = 1800;
+  const VALIDATE_ATTR = 'no_overflowing_text,no_overlapping_text,slide_sized_text';
+  const pad2 = (n) => String(n).padStart(2, '0');
+  const stylesheet = `
+    :host{position:fixed;inset:0;display:block;background:#000;color:#fff;font-family:-apple-system,BlinkMacSystemFont,"Helvetica Neue",Helvetica,Arial,sans-serif;overflow:hidden}
+    .stage{position:absolute;inset:0;display:flex;align-items:center;justify-content:center}
+    .canvas{position:relative;transform-origin:center center;flex-shrink:0;background:#fff;will-change:transform}
+    ::slotted(*){position:absolute!important;inset:0!important;width:100%!important;height:100%!important;box-sizing:border-box!important;overflow:hidden;opacity:0;pointer-events:none;visibility:hidden}
+    ::slotted([data-deck-active]){opacity:1;pointer-events:auto;visibility:visible}
+    .tapzones{position:fixed;inset:0;display:flex;z-index:2147482000;pointer-events:none}
+    .tapzone{flex:1;pointer-events:auto;-webkit-tap-highlight-color:transparent}
+    @media (hover:hover) and (pointer:fine){.tapzones{display:none}}
+    .overlay{position:fixed;left:50%;bottom:22px;transform:translate(-50%,6px) scale(.92);filter:blur(6px);display:flex;align-items:center;gap:4px;padding:4px;background:#000;color:#fff;border-radius:999px;font-size:12px;font-feature-settings:"tnum" 1;letter-spacing:.01em;opacity:0;pointer-events:none;transition:opacity 260ms ease,transform 260ms cubic-bezier(.2,.8,.2,1),filter 260ms ease;transform-origin:center bottom;z-index:2147483000;user-select:none}
+    .overlay[data-visible]{opacity:1;pointer-events:auto;transform:translate(-50%,0) scale(1);filter:blur(0)}
+    .btn{appearance:none;-webkit-appearance:none;background:transparent;border:0;margin:0;padding:0;color:inherit;font:inherit;cursor:default;display:inline-flex;align-items:center;justify-content:center;height:28px;min-width:28px;border-radius:999px;color:rgba(255,255,255,.72);transition:background 140ms ease,color 140ms ease;-webkit-tap-highlight-color:transparent}
+    .btn:hover{background:rgba(255,255,255,.12);color:#fff}.btn:active{background:rgba(255,255,255,.18)}
+    .btn:focus{outline:none}.btn:focus-visible{outline:none}.btn::-moz-focus-inner{border:0}
+    .btn svg{width:14px;height:14px;display:block}
+    .btn.reset{font-size:11px;font-weight:500;letter-spacing:.02em;padding:0 10px 0 12px;gap:6px;color:rgba(255,255,255,.72)}
+    .btn.reset .kbd{display:inline-flex;align-items:center;justify-content:center;min-width:16px;height:16px;padding:0 4px;font-family:ui-monospace,"SF Mono",Menlo,Consolas,monospace;font-size:10px;line-height:1;color:rgba(255,255,255,.88);background:rgba(255,255,255,.12);border-radius:4px}
+    .count{font-variant-numeric:tabular-nums;color:#fff;font-weight:500;padding:0 8px;min-width:42px;text-align:center;font-size:12px}
+    .count .sep{color:rgba(255,255,255,.45);margin:0 3px;font-weight:400}.count .total{color:rgba(255,255,255,.55)}
+    .divider{width:1px;height:14px;background:rgba(255,255,255,.18);margin:0 2px}
+    @media print{:host{position:static;inset:auto;background:none;overflow:visible;color:inherit}.stage{position:static;display:block}.canvas{transform:none!important;width:auto!important;height:auto!important;background:none;will-change:auto}::slotted(*){position:relative!important;inset:auto!important;width:var(--deck-design-w)!important;height:var(--deck-design-h)!important;box-sizing:border-box!important;opacity:1!important;visibility:visible!important;pointer-events:auto;break-after:page;page-break-after:always;break-inside:avoid;overflow:hidden}::slotted(*:last-child){break-after:auto;page-break-after:auto}.overlay,.tapzones{display:none!important}}
+  `;
+  class DeckStage extends HTMLElement {
+    static get observedAttributes(){return ['width','height','noscale'];}
+    constructor(){super();this._root=this.attachShadow({mode:'open'});this._index=0;this._slides=[];this._hideTimer=null;
+      this._onKey=this._onKey.bind(this);this._onResize=this._onResize.bind(this);this._onSlotChange=this._onSlotChange.bind(this);
+      this._onMouseMove=this._onMouseMove.bind(this);this._onTapBack=this._onTapBack.bind(this);this._onTapForward=this._onTapForward.bind(this);}
+    get designWidth(){return parseInt(this.getAttribute('width'),10)||DESIGN_W_DEFAULT;}
+    get designHeight(){return parseInt(this.getAttribute('height'),10)||DESIGN_H_DEFAULT;}
+    connectedCallback(){this._render();this._syncPrintPageRule();window.addEventListener('keydown',this._onKey);
+      window.addEventListener('resize',this._onResize);window.addEventListener('mousemove',this._onMouseMove,{passive:true});}
+    disconnectedCallback(){window.removeEventListener('keydown',this._onKey);window.removeEventListener('resize',this._onResize);
+      window.removeEventListener('mousemove',this._onMouseMove);if(this._hideTimer)clearTimeout(this._hideTimer);}
+    attributeChangedCallback(){if(this._canvas){this._canvas.style.width=this.designWidth+'px';this._canvas.style.height=this.designHeight+'px';
+      this._canvas.style.setProperty('--deck-design-w',this.designWidth+'px');this._canvas.style.setProperty('--deck-design-h',this.designHeight+'px');this._fit();this._syncPrintPageRule();}}
+    _render(){
+      const style=document.createElement('style');style.textContent=stylesheet;
+      const stage=document.createElement('div');stage.className='stage';
+      const canvas=document.createElement('div');canvas.className='canvas';
+      canvas.style.width=this.designWidth+'px';canvas.style.height=this.designHeight+'px';
+      canvas.style.setProperty('--deck-design-w',this.designWidth+'px');canvas.style.setProperty('--deck-design-h',this.designHeight+'px');
+      const slot=document.createElement('slot');slot.addEventListener('slotchange',this._onSlotChange);canvas.appendChild(slot);stage.appendChild(canvas);
+      const tapzones=document.createElement('div');tapzones.className='tapzones';tapzones.setAttribute('aria-hidden','true');
+      const tzBack=document.createElement('div');tzBack.className='tapzone';const tzMid=document.createElement('div');tzMid.className='tapzone';tzMid.style.pointerEvents='none';
+      const tzFwd=document.createElement('div');tzFwd.className='tapzone';tzBack.addEventListener('click',this._onTapBack);tzFwd.addEventListener('click',this._onTapForward);tapzones.append(tzBack,tzMid,tzFwd);
+      const overlay=document.createElement('div');overlay.className='overlay';overlay.setAttribute('role','toolbar');overlay.setAttribute('aria-label','Deck controls');
+      overlay.innerHTML=`
+        <button class="btn prev" type="button" aria-label="Previous slide" title="Previous (←)"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M10 3L5 8l5 5"/></svg></button>
+        <span class="count" aria-live="polite"><span class="current">1</span><span class="sep">/</span><span class="total">1</span></span>
+        <button class="btn next" type="button" aria-label="Next slide" title="Next (→)"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3l5 5-5 5"/></svg></button>
+        <span class="divider"></span>
+        <button class="btn reset" type="button" aria-label="Reset to first slide" title="Reset (R)">Reset<span class="kbd">R</span></button>`;
+      overlay.querySelector('.prev').addEventListener('click',()=>this._go(this._index-1,'click'));
+      overlay.querySelector('.next').addEventListener('click',()=>this._go(this._index+1,'click'));
+      overlay.querySelector('.reset').addEventListener('click',()=>this._go(0,'click'));
+      this._root.append(style,stage,tapzones,overlay);
+      this._canvas=canvas;this._slot=slot;this._overlay=overlay;this._countEl=overlay.querySelector('.current');this._totalEl=overlay.querySelector('.total');
+    }
+    _syncPrintPageRule(){const id='deck-stage-print-page';let tag=document.getElementById(id);if(!tag){tag=document.createElement('style');tag.id=id;document.head.appendChild(tag);}
+      tag.textContent='@page{size:'+this.designWidth+'px '+this.designHeight+'px;margin:0}@media print{html,body{margin:0!important;padding:0!important;background:none!important;overflow:visible!important;height:auto!important}*{-webkit-print-color-adjust:exact;print-color-adjust:exact}}';}
+    _onSlotChange(){this._collectSlides();this._restoreIndex();this._applyIndex({showOverlay:false});this._fit();}
+    _collectSlides(){const assigned=this._slot.assignedElements({flatten:true});
+      this._slides=assigned.filter((el)=>{const t=el.tagName;return t!=='TEMPLATE'&&t!=='SCRIPT'&&t!=='STYLE';});
+      this._slides.forEach((slide,i)=>{const n=i+1;let label=slide.getAttribute('data-label')||'Slide';
+        slide.setAttribute('data-screen-label',`${pad2(n)} ${label}`);
+        if(!slide.hasAttribute('data-om-validate'))slide.setAttribute('data-om-validate',VALIDATE_ATTR);
+        slide.setAttribute('data-deck-slide',String(i));});
+      if(this._totalEl)this._totalEl.textContent=String(this._slides.length||1);
+      if(this._index>=this._slides.length)this._index=Math.max(0,this._slides.length-1);}
+    _restoreIndex(){const h=(location.hash||'').match(/^#(\d+)$/);if(h){const n=parseInt(h[1],10)-1;if(n>=0&&n<this._slides.length)this._index=n;}}
+    _applyIndex({showOverlay=true}={}){if(!this._slides.length)return;const curr=this._index;
+      try{history.replaceState(null,'','#'+(curr+1));}catch(e){}
+      this._slides.forEach((s,i)=>{if(i===curr)s.setAttribute('data-deck-active','');else s.removeAttribute('data-deck-active');});
+      if(this._countEl)this._countEl.textContent=String(curr+1);if(showOverlay)this._flashOverlay();}
+    _flashOverlay(){if(!this._overlay)return;this._overlay.setAttribute('data-visible','');if(this._hideTimer)clearTimeout(this._hideTimer);
+      this._hideTimer=setTimeout(()=>this._overlay.removeAttribute('data-visible'),OVERLAY_HIDE_MS);}
+    _fit(){if(!this._canvas)return;if(this.hasAttribute('noscale')){this._canvas.style.transform='none';return;}
+      const s=Math.min(window.innerWidth/this.designWidth,window.innerHeight/this.designHeight);this._canvas.style.transform=`scale(${s})`;}
+    _onResize(){this._fit();}
+    _onMouseMove(){this._flashOverlay();}
+    _onTapBack(e){e.preventDefault();this._go(this._index-1);}
+    _onTapForward(e){e.preventDefault();this._go(this._index+1);}
+    _onKey(e){const t=e.target;if(t&&(t.isContentEditable||/^(INPUT|TEXTAREA|SELECT)$/.test(t.tagName)))return;if(e.metaKey||e.ctrlKey||e.altKey)return;
+      const k=e.key;let handled=true;
+      if(k==='ArrowRight'||k==='PageDown'||k===' '||k==='Spacebar')this._go(this._index+1);
+      else if(k==='ArrowLeft'||k==='PageUp')this._go(this._index-1);
+      else if(k==='Home')this._go(0);else if(k==='End')this._go(this._slides.length-1);
+      else if(k==='r'||k==='R')this._go(0);
+      else if(/^[0-9]$/.test(k)){const n=k==='0'?9:parseInt(k,10)-1;if(n<this._slides.length)this._go(n);}
+      else handled=false;
+      if(handled){e.preventDefault();this._flashOverlay();}}
+    _go(i){if(!this._slides.length)return;const c=Math.max(0,Math.min(this._slides.length-1,i));if(c===this._index){this._flashOverlay();return;}this._index=c;this._applyIndex({showOverlay:true});}
+    get index(){return this._index;}get length(){return this._slides.length;}
+    goTo(i){this._go(i);}next(){this._go(this._index+1);}prev(){this._go(this._index-1);}reset(){this._go(0);}
+  }
+  if(!customElements.get('deck-stage'))customElements.define('deck-stage',DeckStage);
+})();
+
+/* Presenter voiceover toggle — press N to show/hide the per-slide voiceover note.
+   Hidden by default so it never appears in a screen recording. */
+window.addEventListener('keydown',(e)=>{
+  if(e.metaKey||e.ctrlKey||e.altKey)return;
+  const t=e.target; if(t&&(t.isContentEditable||/^(INPUT|TEXTAREA|SELECT)$/.test(t.tagName)))return;
+  if(e.key==='n'||e.key==='N'){document.body.classList.toggle('show-vo');}
+});
+</script>
+</body>
+</html>

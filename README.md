@@ -17,7 +17,12 @@ point is a favorable draw, and that split is contaminated.
 
 ## Architecture — four roles and a structural test wall
 
-Honesty is enforced by *what each module can import*, not by good intentions:
+Honesty is enforced by *what each module can import*, not by good intentions. The
+climb loop runs entirely on validation; the test set is crossed exactly once:
+
+![Data-flow architecture: the proposer, executor, and deterministic arbiter run in a validation-only loop; the walled auditor touches test molecules but returns only a verdict; a single final evaluation crosses the test wall once.](figures/architecture.png)
+
+*Diagram source: [`architecture_flow.html`](architecture_flow.html) (self-contained; re-export to `figures/architecture.png` to update).*
 
 | role | file | can it touch test? |
 |---|---|---|
