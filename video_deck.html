@@ -245,29 +245,16 @@ body.show-vo .vo{opacity:1}
     <div class="vo">Show Plot B. Narrate: separations happened in only 3 of 10 endpoints, always the same descriptor move, appearing at iteration 2. Everywhere else, honest ties. Signal is early or not at all.</div>
   </section>
 
-  <!-- ============================ 5 · FINDING 2 (CI CLUSTER) =========== -->
-  <section class="slide s-split" data-label="Finding 2 · the headline">
+  <!-- ============================ 5 · FINDING 2 (leaderboard vs measured sampling error) === -->
+  <section class="slide s-diagram" data-label="Finding 2 · the headline">
     <div class="eyebrow">Finding 2 · the headline</div>
     <div class="pagedot">05 / 09</div>
-    <div class="content"><div class="split">
-      <div class="stack">
-        <h2 class="h-panel">On small endpoints, the<br>leaderboard ranks <em>noise.</em></h2>
-        <p class="body soft">The honest error bar on small endpoints is wide enough to cover the top ~15 models. The fine-grained ranking there isn't supported by the data.</p>
-        <p class="take">The top of the board is one <span class="hl">statistical cluster wearing a ranking.</span></p>
-      </div>
-      <div class="stack" style="gap:20px">
-        <div class="cluster">
-          <div class="cirow"><span class="lab">rank i</span><div class="track"><div class="band" style="left:8%;right:40%"></div><div class="pt" style="left:30%"></div></div></div>
-          <div class="cirow"><span class="lab">rank ii</span><div class="track"><div class="band" style="left:14%;right:34%"></div><div class="pt" style="left:38%"></div></div></div>
-          <div class="cirow"><span class="lab">rank v</span><div class="track"><div class="band" style="left:20%;right:26%"></div><div class="pt" style="left:47%"></div></div></div>
-          <div class="cirow"><span class="lab">rank ix</span><div class="track"><div class="band" style="left:12%;right:30%"></div><div class="pt" style="left:44%"></div></div></div>
-          <div class="cirow ours"><span class="lab">ours</span><div class="track"><div class="band ourband" style="left:10%;right:28%"></div><div class="pt ourpt" style="left:40%"></div></div></div>
-        </div>
-        <p class="cluster-cap">Overlapping confidence intervals → indistinguishable ranks. Schematic; replace with real per-endpoint bootstrap CIs.</p>
-      </div>
-    </div></div>
+    <div class="head"><h2 class="h-sect">One statistical cluster, <em>wearing a ranking</em>.</h2></div>
+    <figure class="figwrap">
+      <img src="figures/leaderboard_sampling_overlap.png" alt="On cyp2d6_substrate, the test-set sampling error we measured (0.252 wide) spans the top 10 leaderboard entries; the leaderboard's reported seed std is about 5x tighter than our measured band.">
+    </figure>
     <div class="footer"><span>Honest AI · ADMET</span><span>Finding 2 / 2</span></div>
-    <div class="vo">THE headline. Show the CI cluster: many "ranks" whose confidence intervals all overlap. Say: on small endpoints the honest error bar covers the top ~15 models — the ranking is noise. "One statistical cluster wearing a ranking."</div>
+    <div class="vo">THE headline. On this small endpoint the test-set sampling error WE measured (bootstrap CI, ~0.25 wide) covers all ten top leaderboard entries — while the leaderboard's own reported seed std is ~5x tighter. The fine-grained ranking is inside sampling noise: one statistical cluster wearing a ranking. (Band = our measured CI; bars = their reported seed std; we did NOT recompute a CI per model.)</div>
   </section>
 
   <!-- ============================ 6 · SELF-CATCH (BIG NUMBER) ========== -->
@@ -346,12 +333,12 @@ body.show-vo .vo{opacity:1}
       </div>
       <div class="col-fig">
         <figure class="fig">
-          <img src="figures/leaderboard_bookend.png" alt="Transformed leaderboard bookend"
+          <img src="figures/leaderboard_sampling_overlap.png" alt="Bookend: the measured test-set sampling error spans the top 10 leaderboard entries — the ranks revealed as one statistical cluster."
                onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
           <div class="fig-ph">
             <span class="fig-tag">figure · bookend</span>
-            <span class="fig-cap">The same leaderboard from slide 2, now with wide CI bars overlaid — the top ranks revealed as one cluster. Closes the loop.</span>
-            <span class="fig-drop">drop in → figures/leaderboard_bookend.png</span>
+            <span class="fig-cap">The finding from slide 5, returned to as the close — the measured sampling error spanning the top 10 ranks.</span>
+            <span class="fig-drop">figures/leaderboard_sampling_overlap.png</span>
           </div>
         </figure>
       </div>
